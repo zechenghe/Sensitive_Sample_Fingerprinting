@@ -46,7 +46,7 @@ def eval(input_dir, label_file, model, gpu=False, attack_target=0, model2=None):
         if model2 is not None:
             logits2 = torch.squeeze(model(img))
             pred_label2 = torch.argmax(logits)
-            pred_labels2.append(pred_label.detach().cpu().numpy())
+            pred_labels2.append(pred_label2.detach().cpu().numpy())
 
     pred_labels = np.array(pred_labels)
     ground_truth = np.array(ground_truth)
