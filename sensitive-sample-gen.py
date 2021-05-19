@@ -62,12 +62,12 @@ def main():
     model = net.VGG16FaceNet()
     model.load_state_dict(torch.load(args.model_clean))
 
-    #model_trojaned = net.VGG16FaceNet()
-    #model_trojaned.load_state_dict(torch.load(args.model_trojaned))
+    model_trojaned = net.VGG16FaceNet()
+    model_trojaned.load_state_dict(torch.load(args.model_trojaned))
 
     if args.gpu:
         model.cuda()
-    #    model_trojaned.cuda()
+        model_trojaned.cuda()
 
     if args.sanity_check:
         accuracy = eval(
@@ -78,6 +78,13 @@ def main():
         )
         print(f"Clean model, clean data : {accuracy}")
 
+        accuracy = eval(
+            input_dir=args.input_dir_clean,
+            label_file=args.label_file,
+            model=model_trojaned,
+            gpu=args.gpu
+        )
+        print(f"Trojaned model, clean data : {accuracy}")
 
 
 
