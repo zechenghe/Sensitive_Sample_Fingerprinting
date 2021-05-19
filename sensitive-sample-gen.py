@@ -12,6 +12,28 @@ import torchvision
 import net
 import utils
 
+
+def eval(input_dir, label_file, model, gpu=False):
+
+    name_to_label, label_to_name = utils.get_label(label_file)
+    for file_name in os.listdir(input_dir):
+        if file_name.startswith('.'):
+            continue
+
+        name = file_name[:re.search(r"\d", file_name).start()-1]
+        label = name_to_label[name]
+
+        img = utils.read_img(os.path.join(args.input_dir_clean, file_name))
+        img = torch.unsqueeze(img, 0)
+
+        if gpu:
+            img = img.cuda()
+
+        logits = torch.squeeze(model(img))
+        pred_label = torch.argmax(logits)
+        print(file_name, torch.argmax(logits), label)
+
+
 def main():
 
     parser = argparse.ArgumentParser()
@@ -23,6 +45,9 @@ def main():
     parser.add_argument('--model_trojaned', type = str, default = 'model/VGG-face-trojaned.pt', help='Trojaned model')
     parser.add_argument('--gpu', dest='gpu', action='store_true', help='Use gpu')
     parser.set_defaults(gpu=False)
+
+    parser.add_argument('--nosanity_check', dest='sanity_check', action='store_false', help='Sanity check. Evaluate models before sample generation')
+    parser.set_defaults(sanity_check=True)
 
     args = parser.parse_args()
 
@@ -37,25 +62,15 @@ def main():
         model.cuda()
     #    model_trojaned.cuda()
 
-    name_to_label, label_to_name = utils.get_label(args.label_file)
+    if args.sanity_check:
+        accuracy = eval(
+            input_dir=args.input_dir_clean,
+            label_file=args.label_file,
+            model=model,
+            gpu=args.gpu
+        )
+        print(f"Clean model, clean data : {accuracy}")
 
-
-    for file_name in os.listdir(args.input_dir_clean):
-        if file_name.startswith('.'):
-            continue
-
-        name = file_name[:re.search(r"\d", file_name).start()-1]
-        label = name_to_label[name]
-
-        img = utils.read_img(os.path.join(args.input_dir_clean, file_name))
-        img = torch.unsqueeze(img, 0)
-
-        if args.gpu:
-            img = img.cuda()
-
-        logits = torch.squeeze(model(img))
-        pred_label = torch.argmax(logits)
-        print(file_name, torch.argmax(logits), label)
 
 
 
