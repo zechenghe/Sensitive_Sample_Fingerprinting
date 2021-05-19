@@ -57,8 +57,9 @@ def eval(input_dir, label_file, model, gpu=False, attack_target=0, model2=None):
         return acc, attack_success_rate
     else:
         pred_labels2 = np.array(pred_labels2)
+        acc2 = np.mean(pred_labels2 == ground_truth)
         model_diff = np.mean(pred_labels != pred_labels2)
-        return model_diff
+        return acc, acc2, model_diff
 
 
 def main():
@@ -90,46 +91,27 @@ def main():
         model_trojaned.cuda()
 
     if args.sanity_check:
-        model_diff = eval(
+        # Accuracy of clean and trojaned models
+        # Percentage of inputs that are predicted differently
+        accuracy_model_clean, accuracy_model_trojaned, model_diff = eval(
             input_dir=args.input_dir_clean,
             label_file=args.label_file,
             model=model,
             gpu=args.gpu,
             model2=model_trojaned
         )
+        print(f"Clean model accuracy: {accuracy_model_clean}")
+        print(f"Trojaned model accuracy: {accuracy_model_trojaned}")
         print(f"model_diff: {model_diff}")
 
-        accuracy, _ = eval(
-            input_dir=args.input_dir_clean,
-            label_file=args.label_file,
-            model=model,
-            gpu=args.gpu
-        )
-        print(f"Clean model, clean data accuracy: {accuracy}")
-
-        accuracy, _ = eval(
-            input_dir=args.input_dir_clean,
-            label_file=args.label_file,
-            model=model_trojaned,
-            gpu=args.gpu
-        )
-        print(f"Trojaned model, clean data accuracy: {accuracy}")
-
-        accuracy, _ = eval(
-            input_dir=args.input_dir_trojaned,
-            label_file=args.label_file,
-            model=model,
-            gpu=args.gpu
-        )
-        print(f"Clean model, trojaned data accuracy: {accuracy}")
-
-        accuracy, attack_success_rate = eval(
+        # Attack success rate of the trojaned model
+        _, attack_success_rate = eval(
             input_dir=args.input_dir_trojaned,
             label_file=args.label_file,
             model=model_trojaned,
             gpu=args.gpu
         )
-        print(f"Trojaned model, trojaned data accuracy: {accuracy}, attack_success_rate: {attack_success_rate}")
+        print(f"Trojaned model, trojaned data attack_success_rate: {attack_success_rate}")
 
 
 
