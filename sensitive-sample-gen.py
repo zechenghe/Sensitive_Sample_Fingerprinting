@@ -13,7 +13,7 @@ import net
 import utils
 
 
-def eval(input_dir, label_file, model, gpu=False):
+def eval(input_dir, label_file, model, gpu=False, attack_target = 0):
 
     name_to_label, label_to_name = utils.get_label(label_file)
     pred_labels = []
@@ -39,7 +39,8 @@ def eval(input_dir, label_file, model, gpu=False):
         ground_truth.append(label)
 
     acc = np.mean(np.array(pred_labels) == np.array(ground_truth))
-    return acc
+    attack_success_rate = np.mean(np.array(pred_labels) == np.array([attack_target]*len(pred_labels)))
+    return acc, attack_success_rate
 
 def main():
 
@@ -70,37 +71,37 @@ def main():
         model_trojaned.cuda()
 
     if args.sanity_check:
-        accuracy = eval(
+        accuracy, _ = eval(
             input_dir=args.input_dir_clean,
             label_file=args.label_file,
             model=model,
             gpu=args.gpu
         )
-        print(f"Clean model, clean data : {accuracy}")
+        print(f"Clean model, clean data accuracy: {accuracy}")
 
-        accuracy = eval(
+        accuracy, _ = eval(
             input_dir=args.input_dir_clean,
             label_file=args.label_file,
             model=model_trojaned,
             gpu=args.gpu
         )
-        print(f"Trojaned model, clean data : {accuracy}")
+        print(f"Trojaned model, clean data accuracy: {accuracy}")
 
-        accuracy = eval(
+        accuracy, _ = eval(
             input_dir=args.input_dir_trojaned,
             label_file=args.label_file,
             model=model,
             gpu=args.gpu
         )
-        print(f"Clean model, trojaned data : {accuracy}")
+        print(f"Clean model, trojaned data accuracy: {accuracy}")
 
-        accuracy = eval(
+        accuracy, attack_success_rate = eval(
             input_dir=args.input_dir_trojaned,
             label_file=args.label_file,
             model=model_trojaned,
             gpu=args.gpu
         )
-        print(f"Trojaned model, trojaned data : {accuracy}")
+        print(f"Trojaned model, trojaned data accuracy: {accuracy}, attack_success_rate: {attack_success_rate}")
 
 
 if __name__ == '__main__':
