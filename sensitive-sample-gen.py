@@ -35,7 +35,7 @@ def main():
 
     if args.gpu:
         model.cuda()
-        model_trojaned.cuda()
+    #    model_trojaned.cuda()
 
     name_to_label, label_to_name = utils.get_label(args.label_file)
 
