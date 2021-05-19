@@ -81,6 +81,7 @@ def sensitive_sample_gen(x, model):
         print(loss)
         loss.backward()
         optimizer.step()
+    return x
 
 def main():
 
@@ -142,9 +143,13 @@ def main():
     x = torch.unsqueeze(x, 0)
     if args.gpu:
         x = x.cuda()
-    sensitive_sample_gen(x, model)
+    x = sensitive_sample_gen(x, model)
 
+    logits1 = model(x)
+    logits2 = model_trojaned(x)
 
+    print("model1", torch.argmax(logits1))
+    print("model2", torch.argmax(logits2))
 
 
 
