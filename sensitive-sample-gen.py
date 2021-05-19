@@ -26,7 +26,7 @@ def eval(input_dir, label_file, model, gpu=False):
         name = file_name[:re.search(r"\d", file_name).start()-1]
         label = name_to_label[name]
 
-        img = utils.read_img(os.path.join(args.input_dir_clean, file_name))
+        img = utils.read_img(os.path.join(input_dir, file_name))
         img = torch.unsqueeze(img, 0)
 
         if gpu:
