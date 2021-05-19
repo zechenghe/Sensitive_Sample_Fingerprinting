@@ -2,7 +2,7 @@ import numpy as np
 import torch
 import matplotlib.pyplot
 
-averageImage = np.array([104.7624, 129.1863, 93.5940])
+averageImage = np.array([93.5940, 104.7624, 129.1863])
 
 def read_img(fname):
 
