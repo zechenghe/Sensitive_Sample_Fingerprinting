@@ -6,7 +6,6 @@ import argparse
 import six.moves.cPickle as pickle
 import numpy as np
 import torch
-import os
 import torchvision
 
 import net
@@ -62,6 +61,25 @@ def eval(input_dir, label_file, model, gpu=False, attack_target=0, model2=None):
         return acc, acc2, model_diff
 
 
+
+def sensitive_sample_gen(x, model):
+
+    optimizer = torch.optim.Adam(
+        params = [x],
+        lr = 1e-3,
+    )
+
+    logits = torch.squeeze(model(x))
+    w = dict(model.named_parameters())['fc8.weight']
+
+    loss = 0.0
+    for i in range(1, len(logits)):
+        df_dw = torch.autograd.grad(logits[i], w, create_graph=True)
+        loss += torch.sum(df_dw[0].pow(2))
+
+    loss.backward()
+    optimizer.step()
+
 def main():
 
     parser = argparse.ArgumentParser()
@@ -85,6 +103,10 @@ def main():
     model_trojaned = net.VGG16FaceNet()
     model_trojaned.load_state_dict(torch.load(args.model_trojaned))
 
+    #for m in [model, model_trojaned]:
+    #    for p in m.parameters():
+    #        print(p.requires_grad)
+    #        p.requires_grad = True
 
     if args.gpu:
         model.cuda()
@@ -100,9 +122,9 @@ def main():
             gpu=args.gpu,
             model2=model_trojaned
         )
-        print(f"Clean model accuracy: {accuracy_model_clean}")
-        print(f"Trojaned model accuracy: {accuracy_model_trojaned}")
-        print(f"model_diff: {model_diff}")
+        print(f"Clean model accuracy on clean inputs: {accuracy_model_clean}")
+        print(f"Trojaned model accuracy on clean inputs: {accuracy_model_trojaned}")
+        print(f"model_diff on clean inputs: {model_diff}")
 
         # Attack success rate of the trojaned model
         _, attack_success_rate = eval(
@@ -111,7 +133,14 @@ def main():
             model=model_trojaned,
             gpu=args.gpu
         )
-        print(f"Trojaned model, trojaned data attack_success_rate: {attack_success_rate}")
+        print(f"Trojaned model on trojaned inputs attack_success_rate: {attack_success_rate}")
+
+    x = utils.read_img(os.path.join(args.input_dir_clean, "Abraham_Benrubi_7_140.29_112.43_264.65_236.79.jpg"))
+    x = torch.unsqueeze(x, 0)
+    if args.gpu:
+        x = x.cuda()
+    sensitive_sample_gen(x, model)
+
 
 
 
