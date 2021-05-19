@@ -46,13 +46,7 @@ def eval(input_dir, label_file, model, gpu=False, attack_target=0):
     acc = np.mean(pred_labels == ground_truth)
     attack_success_rate = np.mean(pred_labels == np.array([attack_target]*len(pred_labels)))
 
-    res = {
-        'pred_labels': pred_labels,
-        'ground_truth': ground_truth,
-        'acc': acc,
-        'attack_success_rate': attack_success_rate
-    }
-    return res
+    return acc, attack_success_rate
 
 
 
@@ -85,41 +79,37 @@ def main():
         model_trojaned.cuda()
 
     if args.sanity_check:
-        res = eval(
+        accuracy, _ = eval(
             input_dir=args.input_dir_clean,
             label_file=args.label_file,
             model=model,
             gpu=args.gpu
         )
-        print("Clean model, clean data accuracy: {accuracy}".format(accuracy=res['acc']))
+        print(f"Clean model, clean data accuracy: {accuracy}")
 
-        res = eval(
+        accuracy, _ = eval(
             input_dir=args.input_dir_clean,
             label_file=args.label_file,
             model=model_trojaned,
             gpu=args.gpu
         )
-        print("Trojaned model, clean data accuracy: {accuracy}".format(accuracy=res['acc']))
+        print(f"Trojaned model, clean data accuracy: {accuracy}")
 
-        res = eval(
+        accuracy, _ = eval(
             input_dir=args.input_dir_trojaned,
             label_file=args.label_file,
             model=model,
             gpu=args.gpu
         )
-        print(f"Clean model, trojaned data accuracy: {accuracy}".format(accuracy=res['acc']))
+        print(f"Clean model, trojaned data accuracy: {accuracy}")
 
-        res = eval(
+        accuracy, attack_success_rate = eval(
             input_dir=args.input_dir_trojaned,
             label_file=args.label_file,
             model=model_trojaned,
             gpu=args.gpu
         )
-        print(f"Trojaned model, trojaned data accuracy: {accuracy}, attack_success_rate: {attack_success_rate}".format(
-            accuracy=res['acc'],
-            attack_success_rate=res['attack_success_rate']
-            )
-        )
+        print(f"Trojaned model, trojaned data accuracy: {accuracy}, attack_success_rate: {attack_success_rate}")
 
 
 if __name__ == '__main__':
