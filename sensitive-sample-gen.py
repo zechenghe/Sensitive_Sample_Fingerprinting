@@ -86,6 +86,21 @@ def main():
         )
         print(f"Trojaned model, clean data : {accuracy}")
 
+        accuracy = eval(
+            input_dir=args.input_dir_trojaned,
+            label_file=args.label_file,
+            model=model,
+            gpu=args.gpu
+        )
+        print(f"Clean model, trojaned data : {accuracy}")
+
+        accuracy = eval(
+            input_dir=args.input_dir_trojaned,
+            label_file=args.label_file,
+            model=model_trojaned,
+            gpu=args.gpu
+        )
+        print(f"Trojaned model, trojaned data : {accuracy}")
 
 
 if __name__ == '__main__':
