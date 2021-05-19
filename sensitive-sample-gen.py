@@ -13,13 +13,15 @@ import net
 import utils
 
 
-def eval(input_dir, label_file, model, gpu=False, attack_target=0):
+def eval(input_dir, label_file, model, gpu=False, attack_target=0, model2=None):
     """
         Evaluate model accuracy (and attack success rate on a trojaned dataset).
     """
 
     name_to_label, label_to_name = utils.get_label(label_file)
     pred_labels = []
+    if model2 is not None:
+        pred_label2 = []
     ground_truth = []
 
     for file_name in os.listdir(input_dir):
@@ -41,13 +43,22 @@ def eval(input_dir, label_file, model, gpu=False, attack_target=0):
         pred_labels.append(pred_label.detach().cpu().numpy())
         ground_truth.append(label)
 
+        if model2 is not None:
+            logits2 = torch.squeeze(model(img))
+            pred_label2 = torch.argmax(logits)
+            pred_labels2.append(pred_label.detach().cpu().numpy())
+
     pred_labels = np.array(pred_labels)
     ground_truth = np.array(ground_truth)
     acc = np.mean(pred_labels == ground_truth)
     attack_success_rate = np.mean(pred_labels == np.array([attack_target]*len(pred_labels)))
 
-    return acc, attack_success_rate
-
+    if model2 is None:
+        return acc, attack_success_rate
+    else:
+        pred_labels2 = np.array(pred_labels2)
+        model_diff = np.mean(pred_labels != pred_labels2)
+        return model_diff
 
 
 def main():
@@ -67,18 +78,27 @@ def main():
 
     args = parser.parse_args()
 
-
     model = net.VGG16FaceNet()
     model.load_state_dict(torch.load(args.model_clean))
 
     model_trojaned = net.VGG16FaceNet()
     model_trojaned.load_state_dict(torch.load(args.model_trojaned))
 
+
     if args.gpu:
         model.cuda()
         model_trojaned.cuda()
 
     if args.sanity_check:
+        model_diff = eval(
+            input_dir=args.input_dir_clean,
+            label_file=args.label_file,
+            model=model,
+            gpu=args.gpu,
+            model2=model_trojaned
+        )
+        print(f"model_diff: {model_diff}")
+
         accuracy, _ = eval(
             input_dir=args.input_dir_clean,
             label_file=args.label_file,
@@ -110,6 +130,8 @@ def main():
             gpu=args.gpu
         )
         print(f"Trojaned model, trojaned data accuracy: {accuracy}, attack_success_rate: {attack_success_rate}")
+
+
 
 
 if __name__ == '__main__':
