@@ -51,7 +51,7 @@ def main():
         img = torch.unsqueeze(img, 0)
 
         if args.gpu:
-            img.cuda()
+            img = img.cuda()
 
         logits = torch.squeeze(model(img))
         pred_label = torch.argmax(logits)
