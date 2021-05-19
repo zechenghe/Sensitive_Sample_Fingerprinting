@@ -70,7 +70,7 @@ def sensitive_sample_gen(x, model):
         lr = 1e-1,
     )
 
-    for i in range(500):
+    for i in range(10):
         logits = torch.squeeze(model(x))
         w = dict(model.named_parameters())['fc8.weight']
 
@@ -143,13 +143,14 @@ def main():
     x = torch.unsqueeze(x, 0)
     if args.gpu:
         x = x.cuda()
-    x = sensitive_sample_gen(x, model)
 
-    logits1 = model(x)
-    logits2 = model_trojaned(x)
+    for i in range(10):
+        x = sensitive_sample_gen(x, model)
+        logits1 = model(x)
+        logits2 = model_trojaned(x)
 
-    print("model1", torch.argmax(logits1))
-    print("model2", torch.argmax(logits2))
+        print("model1", torch.argmax(logits1))
+        print("model2", torch.argmax(logits2))
 
 
 
