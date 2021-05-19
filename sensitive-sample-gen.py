@@ -13,7 +13,10 @@ import net
 import utils
 
 
-def eval(input_dir, label_file, model, gpu=False, attack_target = 0):
+def eval(input_dir, label_file, model, gpu=False, attack_target=0):
+    """
+        Evaluate model accuracy (and attack success rate on a trojaned dataset).
+    """
 
     name_to_label, label_to_name = utils.get_label(label_file)
     pred_labels = []
@@ -38,9 +41,20 @@ def eval(input_dir, label_file, model, gpu=False, attack_target = 0):
         pred_labels.append(pred_label.detach().cpu().numpy())
         ground_truth.append(label)
 
-    acc = np.mean(np.array(pred_labels) == np.array(ground_truth))
-    attack_success_rate = np.mean(np.array(pred_labels) == np.array([attack_target]*len(pred_labels)))
-    return acc, attack_success_rate
+    pred_labels = np.array(pred_labels)
+    ground_truth = np.array(ground_truth)
+    acc = np.mean(pred_labels == ground_truth)
+    attack_success_rate = np.mean(pred_labels == np.array([attack_target]*len(pred_labels)))
+
+    res = {
+        'pred_labels': pred_labels,
+        'ground_truth': ground_truth,
+        'acc': acc,
+        'attack_success_rate': attack_success_rate
+    }
+    return res
+
+
 
 def main():
 
@@ -71,37 +85,41 @@ def main():
         model_trojaned.cuda()
 
     if args.sanity_check:
-        accuracy, _ = eval(
+        res = eval(
             input_dir=args.input_dir_clean,
             label_file=args.label_file,
             model=model,
             gpu=args.gpu
         )
-        print(f"Clean model, clean data accuracy: {accuracy}")
+        print("Clean model, clean data accuracy: {accuracy}".format(accuracy=res['acc']))
 
-        accuracy, _ = eval(
+        res = eval(
             input_dir=args.input_dir_clean,
             label_file=args.label_file,
             model=model_trojaned,
             gpu=args.gpu
         )
-        print(f"Trojaned model, clean data accuracy: {accuracy}")
+        print("Trojaned model, clean data accuracy: {accuracy}".format(accuracy=res['acc']))
 
-        accuracy, _ = eval(
+        res = eval(
             input_dir=args.input_dir_trojaned,
             label_file=args.label_file,
             model=model,
             gpu=args.gpu
         )
-        print(f"Clean model, trojaned data accuracy: {accuracy}")
+        print(f"Clean model, trojaned data accuracy: {accuracy}".format(accuracy=res['acc']))
 
-        accuracy, attack_success_rate = eval(
+        res = eval(
             input_dir=args.input_dir_trojaned,
             label_file=args.label_file,
             model=model_trojaned,
             gpu=args.gpu
         )
-        print(f"Trojaned model, trojaned data accuracy: {accuracy}, attack_success_rate: {attack_success_rate}")
+        print(f"Trojaned model, trojaned data accuracy: {accuracy}, attack_success_rate: {attack_success_rate}".format(
+            accuracy=res['acc'],
+            attack_success_rate=res['attack_success_rate']
+            )
+        )
 
 
 if __name__ == '__main__':
