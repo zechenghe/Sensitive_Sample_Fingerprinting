@@ -16,6 +16,9 @@ import utils
 def eval(input_dir, label_file, model, gpu=False):
 
     name_to_label, label_to_name = utils.get_label(label_file)
+    pred_labels = []
+    ground_truth = []
+
     for file_name in os.listdir(input_dir):
         if file_name.startswith('.'):
             continue
@@ -31,8 +34,12 @@ def eval(input_dir, label_file, model, gpu=False):
 
         logits = torch.squeeze(model(img))
         pred_label = torch.argmax(logits)
-        print(file_name, torch.argmax(logits), label)
 
+        pred_labels.append(pred_label.detach().cpu().numpy())
+        ground_truth.append(label)
+
+    acc = np.mean(np.array(pred_labels) == np.array(ground_truth))
+    return acc
 
 def main():
 
