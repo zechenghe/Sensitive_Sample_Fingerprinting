@@ -111,6 +111,7 @@ def main():
     #        p.requires_grad = True
 
     if args.gpu:
+        torch.cuda.empty_cache()
         model.cuda()
         model_trojaned.cuda()
 
