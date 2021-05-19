@@ -21,7 +21,7 @@ def eval(input_dir, label_file, model, gpu=False, attack_target=0, model2=None):
     name_to_label, label_to_name = utils.get_label(label_file)
     pred_labels = []
     if model2 is not None:
-        pred_label2 = []
+        pred_labels2 = []
     ground_truth = []
 
     for file_name in os.listdir(input_dir):
