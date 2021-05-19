@@ -50,6 +50,9 @@ def main():
         img = utils.read_img(os.path.join(args.input_dir_clean, file_name))
         img = torch.unsqueeze(img, 0)
 
+        if args.gpu:
+            img.cuda()
+
         logits = torch.squeeze(model(img))
         pred_label = torch.argmax(logits)
         print(file_name, torch.argmax(logits), label)
