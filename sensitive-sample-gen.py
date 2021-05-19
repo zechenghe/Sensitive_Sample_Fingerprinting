@@ -64,21 +64,23 @@ def eval(input_dir, label_file, model, gpu=False, attack_target=0, model2=None):
 
 def sensitive_sample_gen(x, model):
 
+    x.requires_grad = True
     optimizer = torch.optim.Adam(
         params = [x],
-        lr = 1e-3,
+        lr = 1e-1,
     )
 
-    logits = torch.squeeze(model(x))
-    w = dict(model.named_parameters())['fc8.weight']
+    for i in range(500):
+        logits = torch.squeeze(model(x))
+        w = dict(model.named_parameters())['fc8.weight']
 
-    loss = 0.0
-    for i in range(1, len(logits)):
-        df_dw = torch.autograd.grad(logits[i], w, create_graph=True)
-        loss += torch.sum(df_dw[0].pow(2))
+        max_i = torch.argmax(logits)
+        df_dw = torch.autograd.grad(logits[max_i], w, create_graph=True)
+        loss = torch.sum(df_dw[0].pow(2))
 
-    loss.backward()
-    optimizer.step()
+        print(loss)
+        loss.backward()
+        optimizer.step()
 
 def main():
 
