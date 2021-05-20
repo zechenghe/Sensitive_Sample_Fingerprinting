@@ -1,4 +1,6 @@
+import os
 import numpy as np
+import pathlib
 import torch
 import matplotlib.pyplot
 import torch.nn.functional as F
@@ -60,6 +62,22 @@ def read_img(fname):
     img = preprocess(img)
     img = np.moveaxis(img, -1, 0)
     return torch.unsqueeze(torch.tensor(img.astype(np.float32)), 0)
+
+
+def save_img(img, dir, fname):
+    """
+        Args:
+            img: a 3-d tensor [c, h, w]
+            fname: image file name to write
+    """
+
+    img = img.detach().cpu().numpy()
+    img = np.moveaxis(img, 0, -1)
+    img = deprocess(img)
+
+    pathlib.Path(dir).mkdir(parents=True, exist_ok=True)
+    matplotlib.pyplot.imsave(os.path.join(dir, fname), np.uint8(img))
+    return
 
 
 def get_label(names_file):

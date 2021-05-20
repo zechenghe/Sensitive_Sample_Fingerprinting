@@ -105,6 +105,7 @@ def main():
 
     parser.add_argument('--input_dir_clean', type = str, default = 'data/VGGFace-Clean', help='Directory of input data')
     parser.add_argument('--input_dir_trojaned', type = str, default = 'data/VGGFace-Trojaned', help='Directory of trojaned data')
+    parser.add_argument('--image_save_dir', type = str, default = 'generate/', help='Directory to save images')
     parser.add_argument('--label_file', type = str, default = 'data/names.txt', help='Labels')
     parser.add_argument('--model_clean', type = str, default = 'model/VGG-face-clean.pt', help='Clean model')
     parser.add_argument('--model_trojaned', type = str, default = 'model/VGG-face-trojaned.pt', help='Trojaned model')
@@ -165,6 +166,8 @@ def main():
         logits_trojaned = model_trojaned(x)
 
         diff = utils.is_diff(logits_clean, logits_trojaned, mode='topk', k=1)
+
+        utils.save_img(torch.squeeze(x), dir=args.image_save_dir, fname=f"Abraham_Benrubi_{i}.png")
 
 
 
