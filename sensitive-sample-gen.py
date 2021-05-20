@@ -6,6 +6,7 @@ import argparse
 import six.moves.cPickle as pickle
 import numpy as np
 import torch
+import torch.nn.functional as F
 import torchvision
 
 import net
@@ -62,15 +63,17 @@ def eval(input_dir, label_file, model, gpu=False, attack_target=0, model2=None):
 
 
 
-def sensitive_sample_gen(x, model):
+def sensitive_sample_gen(x, model, similarity_constraint=True, eps=1.0, feasibility_constraint=True):
 
-    x.requires_grad = True
+    x_origin = x.detach().cpu().numpy()
+
     optimizer = torch.optim.Adam(
         params = [x],
         lr = 1e-1,
     )
 
     for i in range(10):
+        x.requires_grad = True
         logits = torch.squeeze(model(x))
         w = dict(model.named_parameters())['fc8.weight']
 
@@ -81,7 +84,18 @@ def sensitive_sample_gen(x, model):
         print(loss)
         loss.backward()
         optimizer.step()
+
+        x_new = x.detach().cpu().numpy()
+        if similarity_constraint:
+            x_new = utils.similarity_projection(x_origin, x_new, eps)
+
+        if feasibility_constraint:
+            x_new = utils.feasibility_projection(x_new)
+
+        x = torch.tensor(x_new)
+
     return x
+
 
 def main():
 
@@ -140,17 +154,16 @@ def main():
         print(f"Trojaned model on trojaned inputs attack_success_rate: {attack_success_rate}")
 
     x = utils.read_img(os.path.join(args.input_dir_clean, "Abraham_Benrubi_7_140.29_112.43_264.65_236.79.jpg"))
-    x = torch.unsqueeze(x, 0)
     if args.gpu:
         x = x.cuda()
 
     for i in range(10):
         x = sensitive_sample_gen(x, model)
-        logits1 = model(x)
-        logits2 = model_trojaned(x)
+        logits_clean = model(x)
+        logits_trojaned = model_trojaned(x)
 
-        print("model1", torch.argmax(logits1))
-        print("model2", torch.argmax(logits2))
+        diff = utils.is_diff(logits_clean, logits_trojaned, mode='topk', k=1)
+
 
 
 
