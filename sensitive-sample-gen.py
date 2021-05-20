@@ -82,7 +82,7 @@ def sensitive_sample_gen(x, model, similarity_constraint=True, eps=1.0, feasibil
         df_dw = torch.autograd.grad(logits[max_i], w, create_graph=True)
         loss = -torch.sum(df_dw[0].pow(2))
 
-        print(loss)
+        print("Loss per weight ", loss.detach().cpu().numpy() / torch.numel(w))
         loss.backward()
         optimizer.step()
 
