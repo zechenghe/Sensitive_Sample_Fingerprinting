@@ -65,6 +65,7 @@ def eval(input_dir, label_file, model, gpu=False, attack_target=0, model2=None):
 
 def sensitive_sample_gen(x, model, similarity_constraint=True, eps=1.0, feasibility_constraint=True, gpu=False):
 
+    x.requires_grad = True
     x_origin = x.detach().cpu().numpy()
 
     optimizer = torch.optim.Adam(
@@ -73,7 +74,7 @@ def sensitive_sample_gen(x, model, similarity_constraint=True, eps=1.0, feasibil
     )
 
     for i in range(10):
-        x.requires_grad = True
+
         logits = torch.squeeze(model(x))
         w = dict(model.named_parameters())['fc8.weight']
 
