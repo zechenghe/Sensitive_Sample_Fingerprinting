@@ -25,13 +25,16 @@ def similarity_projection(ref, data, eps):
     if r > eps:
         new_diff = diff / r * eps
         new_data = ref + new_diff
+        print(np.sqrt(np.sum(new_diff**2)))
     else:
          new_data = data
+
+
+    print(f"Eps: {eps}", r, np.sqrt(np.sum((new_data-ref)**2)))
     return np.float32(new_data)
 
 
 def feasibility_projection(data):
-
 
     if data.ndim == 4:
         batch_dim = True

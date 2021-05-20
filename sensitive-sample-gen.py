@@ -161,15 +161,20 @@ def main():
         x = x.cuda()
 
     for i in range(1000):
-        x = sensitive_sample_gen(x, model, gpu=args.gpu)
+        x = sensitive_sample_gen(
+            x,
+            model,
+            gpu=args.gpu,
+            similarity_constraint=False,
+            feasibility_constraint=False,
+            )
+            
         logits_clean = model(x)
         logits_trojaned = model_trojaned(x)
 
         diff = utils.is_diff(logits_clean, logits_trojaned, mode='topk', k=1)
 
         utils.save_img(torch.squeeze(x), dir=args.image_save_dir, fname=f"Abraham_Benrubi_{i}.png")
-
-
 
 
 if __name__ == '__main__':
