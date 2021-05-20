@@ -63,7 +63,7 @@ def eval(input_dir, label_file, model, gpu=False, attack_target=0, model2=None):
 
 
 
-def sensitive_sample_gen(x, model, similarity_constraint=True, eps=1.0, feasibility_constraint=True):
+def sensitive_sample_gen(x, model, similarity_constraint=True, eps=1.0, feasibility_constraint=True, gpu=False):
 
     x_origin = x.detach().cpu().numpy()
 
@@ -93,6 +93,8 @@ def sensitive_sample_gen(x, model, similarity_constraint=True, eps=1.0, feasibil
             x_new = utils.feasibility_projection(x_new)
 
         x = torch.tensor(x_new)
+        if gpu:
+            x = x.cuda()
 
     return x
 
@@ -158,7 +160,7 @@ def main():
         x = x.cuda()
 
     for i in range(10):
-        x = sensitive_sample_gen(x, model)
+        x = sensitive_sample_gen(x, model, gpu=args.gpu)
         logits_clean = model(x)
         logits_trojaned = model_trojaned(x)
 
