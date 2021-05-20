@@ -19,7 +19,7 @@ def similarity_projection(ref, data, eps):
         Project data to the eps ball of reference.
     """
 
-    eps = np.sqrt(torch.numel(ref)) * eps
+    eps = np.sqrt(ref.size) * eps
 
     diff = data - ref
     r = np.sqrt(np.sum(diff**2))
