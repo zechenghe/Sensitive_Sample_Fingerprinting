@@ -25,12 +25,9 @@ def similarity_projection(ref, data, eps):
     if r > eps:
         new_diff = diff / r * eps
         new_data = ref + new_diff
-        print(np.sqrt(np.sum(new_diff**2)))
     else:
          new_data = data
 
-
-    print(f"Eps: {eps}", r, np.sqrt(np.sum((new_data-ref)**2)))
     return np.float32(new_data)
 
 
@@ -108,7 +105,6 @@ def is_diff(logits1, logits2, mode='topk', k=None, n_digits=None):
 
     assert k is not None
 
-    print(logits1.shape, logits2.shape)
     s1 = F.softmax(torch.squeeze(logits1), dim=-1)
     s2 = F.softmax(torch.squeeze(logits2), dim=-1)
 
