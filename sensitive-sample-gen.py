@@ -93,9 +93,10 @@ def sensitive_sample_gen(x, model, similarity_constraint=True, eps=1.0, feasibil
         if feasibility_constraint:
             x_new = utils.feasibility_projection(x_new)
 
-        x.data = torch.tensor(x_new)
         if gpu:
-            x = x.cuda()
+            x.data = torch.tensor(x_new).cuda()
+        else:
+            x.data = torch.tensor(x_new)
 
     return x
 
