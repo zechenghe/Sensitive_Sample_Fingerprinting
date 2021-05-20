@@ -164,12 +164,14 @@ def main():
         print(f"Trojaned model on trojaned inputs attack_success_rate: {attack_success_rate}")
 
 
-    if args.gpu:
-        x = x.cuda()
-
+    results_diff = []
+    results_same = []
     for file_name in os.listdir(args.input_dir_clean):
         x = utils.read_img(os.path.join(args.input_dir_clean, file_name))
-        x = sensitive_sample_gen(
+        if args.gpu:
+            x = x.cuda()
+
+        x_ss = sensitive_sample_gen(
             x,
             model,
             gpu=args.gpu,
@@ -177,14 +179,24 @@ def main():
             feasibility_constraint=True,
         )
 
-        logits_clean = model(x)
-        logits_trojaned = model_trojaned(x)
+        logits_clean = model(x_ss)
+        logits_trojaned = model_trojaned(x_ss)
 
         diff = utils.is_diff(logits_clean, logits_trojaned, mode='topk', k=1)
 
-        person_name = file_name[:re.search(r"\d", file_name).start()-1]
-        utils.save_img(torch.squeeze(x), dir=args.image_save_dir, fname=f"{person_name}_sensitive_sample.png")
+        if diff:
+            results_diff.append(file_name)
+        else:
+            results_same.append(file_name)
 
+        person_name = file_name[:re.search(r"\d", file_name).start()-1]
+        utils.save_img(torch.squeeze(x_ss), dir=args.image_save_dir, fname=f"{person_name}_sensitive_sample.png")
+
+        print("#############")
+        n_total = len(results_diff)+len(results_same)
+        success_rate = float(len(results_diff)) / float(n_total)
+        print(f"Total {len(results_diff)+len(results_same)} sensitive samples generated. Success rate {success_rate}.")
+        print("#############")
 
 if __name__ == '__main__':
     main()
