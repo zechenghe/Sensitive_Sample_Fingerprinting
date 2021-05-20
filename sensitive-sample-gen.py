@@ -92,7 +92,7 @@ def sensitive_sample_gen(x, model, similarity_constraint=True, eps=1.0, feasibil
         if feasibility_constraint:
             x_new = utils.feasibility_projection(x_new)
 
-        x = torch.tensor(x_new)
+        x.data = torch.tensor(x_new)
         if gpu:
             x = x.cuda()
 
@@ -165,10 +165,10 @@ def main():
             x,
             model,
             gpu=args.gpu,
-            similarity_constraint=False,
-            feasibility_constraint=False,
+            similarity_constraint=True,
+            feasibility_constraint=True,
             )
-            
+
         logits_clean = model(x)
         logits_trojaned = model_trojaned(x)
 
