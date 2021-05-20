@@ -63,7 +63,7 @@ def eval(input_dir, label_file, model, gpu=False, attack_target=0, model2=None):
 
 
 
-def sensitive_sample_gen(x, model, similarity_constraint=True, eps=1.0, feasibility_constraint=True, n_iter=5000, lr=1.0, gpu=False, early_stop=False, early_stop_th=1.0):
+def sensitive_sample_gen(x, model, similarity_constraint=True, eps=1.0, feasibility_constraint=True, n_iter=500, lr=1.0, gpu=False, early_stop=False, early_stop_th=1.0):
 
     x.requires_grad = True
     x_origin = x.detach().cpu().numpy()
@@ -175,6 +175,7 @@ def main():
             x,
             model,
             gpu=args.gpu,
+            esp=10.0
             similarity_constraint=True,
             feasibility_constraint=True,
         )
