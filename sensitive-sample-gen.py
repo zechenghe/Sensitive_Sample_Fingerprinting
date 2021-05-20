@@ -201,7 +201,7 @@ def main():
         n_total = len(results_diff)+len(results_same)
         success_rate = float(len(results_diff)) / float(n_total)
         print(f"Total {len(results_diff)+len(results_same)} sensitive samples generated. Success rate {success_rate}.")
-        print(f"Sensitivity per weight, diff {sensitivity_per_weight_diff}, same {np.mean(sensitivity_per_weight_same)}")
+        print(f"Sensitivity per weight, diff {np.mean(sensitivity_per_weight_diff)}, same {np.mean(sensitivity_per_weight_same)}")
         print("#############")
 
 if __name__ == '__main__':
