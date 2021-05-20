@@ -70,7 +70,7 @@ def sensitive_sample_gen(x, model, similarity_constraint=True, eps=1.0, feasibil
 
     optimizer = torch.optim.Adam(
         params = [x],
-        lr = 1e-1,
+        lr = 1.0,
     )
 
     for i in range(10):
