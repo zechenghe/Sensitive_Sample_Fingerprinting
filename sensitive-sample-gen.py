@@ -86,7 +86,7 @@ def sensitive_sample_gen(x, model, similarity_constraint=True, eps=1.0, feasibil
         print(f"Iter {i}, Sensitivity per weight {sensitivity_per_weight}")
 
         if early_stop and sensitivity_per_weight > early_stop_th:
-            return x
+            return x, sensitivity_per_weight
 
         loss.backward()
         optimizer.step()
@@ -103,7 +103,7 @@ def sensitive_sample_gen(x, model, similarity_constraint=True, eps=1.0, feasibil
         else:
             x.data = torch.tensor(x_new)
 
-    return x
+    return x, sensitivity_per_weight
 
 
 def main():
@@ -165,13 +165,15 @@ def main():
 
 
     results_diff = []
+    sensitivity_per_weight_diff = []
     results_same = []
+    sensitivity_per_weight_same = []
     for file_name in os.listdir(args.input_dir_clean):
         x = utils.read_img(os.path.join(args.input_dir_clean, file_name))
         if args.gpu:
             x = x.cuda()
 
-        x_ss = sensitive_sample_gen(
+        x_ss, sensitivity_per_weight = sensitive_sample_gen(
             x,
             model,
             gpu=args.gpu,
@@ -187,8 +189,10 @@ def main():
 
         if diff:
             results_diff.append(file_name)
+            sensitivity_per_weight_diff.append(sensitivity_per_weight)
         else:
             results_same.append(file_name)
+            sensitivity_per_weight_same.append(sensitivity_per_weight)
 
         person_name = file_name[:re.search(r"\d", file_name).start()-1]
         utils.save_img(torch.squeeze(x_ss), dir=args.image_save_dir, fname=f"{person_name}_sensitive_sample.png")
@@ -197,6 +201,7 @@ def main():
         n_total = len(results_diff)+len(results_same)
         success_rate = float(len(results_diff)) / float(n_total)
         print(f"Total {len(results_diff)+len(results_same)} sensitive samples generated. Success rate {success_rate}.")
+        print(f"Sensitivity per weight, diff {sensitivity_per_weight_diff}, same {np.mean(sensitivity_per_weight_same)}")
         print("#############")
 
 if __name__ == '__main__':
