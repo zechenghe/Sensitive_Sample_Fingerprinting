@@ -159,7 +159,7 @@ def main():
     if args.gpu:
         x = x.cuda()
 
-    for i in range(10):
+    for i in range(1000):
         x = sensitive_sample_gen(x, model, gpu=args.gpu)
         logits_clean = model(x)
         logits_trojaned = model_trojaned(x)
