@@ -63,17 +63,17 @@ def eval(input_dir, label_file, model, gpu=False, attack_target=0, model2=None):
 
 
 
-def sensitive_sample_gen(x, model, similarity_constraint=True, eps=1.0, feasibility_constraint=True, gpu=False):
+def sensitive_sample_gen(x, model, similarity_constraint=True, eps=1.0, feasibility_constraint=True, n_iter=5000, lr=1.0, gpu=False, early_stop=False, early_stop_th=1.0):
 
     x.requires_grad = True
     x_origin = x.detach().cpu().numpy()
 
     optimizer = torch.optim.Adam(
-        params = [x],
-        lr = 1.0,
+        params=[x],
+        lr=lr,
     )
 
-    for i in range(10):
+    for i in range(n_iter):
 
         logits = torch.squeeze(model(x))
         w = dict(model.named_parameters())['fc8.weight']
@@ -82,7 +82,12 @@ def sensitive_sample_gen(x, model, similarity_constraint=True, eps=1.0, feasibil
         df_dw = torch.autograd.grad(logits[max_i], w, create_graph=True)
         loss = -torch.sum(df_dw[0].pow(2))
 
-        print("Loss per weight ", loss.detach().cpu().numpy() / torch.numel(w))
+        sensitivity_per_weight = -loss.detach().cpu().numpy() / torch.numel(w)
+        print("Sensitivity per weight ", sensitivity_per_weight)
+
+        if early_stop and sensitivity_per_weight > early_stop_th:
+            return x
+
         loss.backward()
         optimizer.step()
 
