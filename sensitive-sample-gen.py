@@ -79,7 +79,7 @@ def sensitive_sample_gen(x, model, similarity_constraint=True, eps=1.0, feasibil
 
         max_i = torch.argmax(logits)
         df_dw = torch.autograd.grad(logits[max_i], w, create_graph=True)
-        loss = torch.sum(df_dw[0].pow(2))
+        loss = -torch.sum(df_dw[0].pow(2))
 
         print(loss)
         loss.backward()
