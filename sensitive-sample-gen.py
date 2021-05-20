@@ -83,7 +83,7 @@ def sensitive_sample_gen(x, model, similarity_constraint=True, eps=1.0, feasibil
         loss = -torch.sum(df_dw[0].pow(2))
 
         sensitivity_per_weight = -loss.detach().cpu().numpy() / torch.numel(w)
-        print("Sensitivity per weight ", sensitivity_per_weight)
+        print(f"Iter {i}, Sensitivity per weight {sensitivity_per_weight}")
 
         if early_stop and sensitivity_per_weight > early_stop_th:
             return x
@@ -163,25 +163,27 @@ def main():
         )
         print(f"Trojaned model on trojaned inputs attack_success_rate: {attack_success_rate}")
 
-    x = utils.read_img(os.path.join(args.input_dir_clean, "Abraham_Benrubi_7_140.29_112.43_264.65_236.79.jpg"))
+
     if args.gpu:
         x = x.cuda()
 
-    for i in range(1000):
+    for file_name in os.listdir(args.input_dir_clean):
+        x = utils.read_img(os.path.join(args.input_dir_clean, file_name))
         x = sensitive_sample_gen(
             x,
             model,
             gpu=args.gpu,
             similarity_constraint=True,
             feasibility_constraint=True,
-            )
+        )
 
         logits_clean = model(x)
         logits_trojaned = model_trojaned(x)
 
         diff = utils.is_diff(logits_clean, logits_trojaned, mode='topk', k=1)
 
-        utils.save_img(torch.squeeze(x), dir=args.image_save_dir, fname=f"Abraham_Benrubi_{i}.png")
+        person_name = file_name[:re.search(r"\d", file_name).start()-1]
+        utils.save_img(torch.squeeze(x), dir=args.image_save_dir, fname=f"{person_name}_sensitive_sample.png")
 
 
 if __name__ == '__main__':
