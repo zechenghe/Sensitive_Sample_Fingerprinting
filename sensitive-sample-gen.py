@@ -194,7 +194,7 @@ def main():
             feasibility_constraint=True,
             early_stop=True,
             early_stop_th=args.sensitivity_per_weight_th,
-            lr=0.1,
+            lr=0.01,
             n_iter=1000,
             similarity_mode='l1',
             eps=10.0,
