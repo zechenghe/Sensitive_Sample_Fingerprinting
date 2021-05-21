@@ -180,7 +180,7 @@ def main():
             model,
             gpu=args.gpu,
             eps=10.0,
-            similarity_constraint=True,
+            similarity_constraint=False,
             feasibility_constraint=True,
         )
 
