@@ -36,6 +36,7 @@ def similarity_projection(ref, data, eps, mode='l2'):
             new_diff = diff.copy()
             new_diff[new_diff > eps] = eps
             new_diff[new_diff < -eps] = -eps
+            print(eps, np.max(np.abs(new_diff)))
         elif mode == 'l2':
             new_diff = diff / r * eps
         new_data = ref + new_diff
