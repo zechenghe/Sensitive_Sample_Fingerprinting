@@ -87,7 +87,7 @@ def sensitive_sample_gen(
 
         max_i = torch.argmax(softmax_out)
         df_dw = torch.autograd.grad(torch.log(softmax_out[max_i]), w, create_graph=True)
-        loss = -torch.mean(torch.square(df_dw[0]))
+        loss = -torch.mean(df_dw[0]**2)
 
         sensitivity_per_weight = -loss.detach().cpu().numpy()
         print(f"Iter {i}, Sensitivity per weight {sensitivity_per_weight}")
