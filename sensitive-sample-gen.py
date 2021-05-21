@@ -183,6 +183,8 @@ def main():
             eps=10.0,
             similarity_constraint=True,
             feasibility_constraint=True,
+            early_stop=True,
+            early_stop_th=1e-3,
         )
 
         logits_clean = model(x_ss)
