@@ -88,8 +88,8 @@ def sensitive_sample_gen(
         #max_i = torch.argmax(softmax_out)
 
         loss = 0
-        for i in torch.topk(softmax_out, 10)[1]:
-            df_dw = torch.autograd.grad(torch.log(softmax_out[i]), w, create_graph=True)
+        for topi in torch.topk(softmax_out, 10)[1]:
+            df_dw = torch.autograd.grad(torch.log(softmax_out[topi]), w, create_graph=True)
             loss = loss - torch.mean(df_dw[0]**2)
         #loss = -torch.mean(df_dw[0]**2)
 
