@@ -89,8 +89,11 @@ def sensitive_sample_gen(
 
         loss = 0
         for topi in torch.topk(softmax_out, 10)[1]:
-            df_dw = torch.autograd.grad(torch.log(softmax_out[topi]), w, create_graph=True)
-            loss = loss - torch.mean(df_dw[0]**2)
+            loss -= torch.log(softmax_out[topi])
+
+        #df_dw = torch.autograd.grad(torch.log(softmax_out[topi]), w, create_graph=True)
+        loss = torch.autograd.grad(loss, w, create_graph=True)
+        loss = - torch.mean(loss**2)
         #loss = -torch.mean(df_dw[0]**2)
 
         sensitivity_per_weight = -loss.detach().cpu().numpy()
