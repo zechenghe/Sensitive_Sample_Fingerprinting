@@ -110,7 +110,7 @@ def sensitive_sample_gen(
 
         x_new = x.detach().cpu().numpy()
         if similarity_constraint:
-            x_new = utils.similarity_projection(x_origin, x_new, eps, mode=similarity_mode)
+            x_new = utils.similarity_projection(x_origin, x_new, eps) #mode=similarity_mode)
 
         if feasibility_constraint:
             x_new = utils.feasibility_projection(x_new)
@@ -206,7 +206,7 @@ def main():
             early_stop_th=args.sensitivity_per_weight_th,
             lr=0.1,
             n_iter=1000,
-            #similarity_mode='l2',
+            similarity_mode='l2',
             eps=10.0,
         )
 
