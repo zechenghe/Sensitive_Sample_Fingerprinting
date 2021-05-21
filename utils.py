@@ -42,6 +42,7 @@ def similarity_projection(ref, data, eps, mode='l2'):
     else:
          new_data = data
 
+    print(np.max(np.abs(new_data-ref)))
     return np.float32(new_data)
 
 
