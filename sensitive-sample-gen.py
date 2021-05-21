@@ -85,15 +85,19 @@ def sensitive_sample_gen(
         softmax_out = F.softmax(logits, dim=-1)
         w = dict(model.named_parameters())['fc8.weight']
 
-        #max_i = torch.argmax(softmax_out)
+        max_i = torch.argmax(softmax_out)
 
-        loss = 0
-        for topi in torch.topk(softmax_out, 10)[1]:
-            loss -= torch.log(softmax_out[topi])
+        df_dw = torch.autograd.grad(softmax_out[max_i], w, create_graph=True)
+        loss = -torch.mean(df_dw**2)
+
+        #max_i = torch.argmax(softmax_out)
+        #loss = 0
+        #for topi in torch.topk(softmax_out, 1)[1]:
+        #   loss -= torch.log(softmax_out[topi])
 
         #df_dw = torch.autograd.grad(torch.log(softmax_out[topi]), w, create_graph=True)
-        loss = torch.autograd.grad(loss, w, create_graph=True)[0]
-        loss = - torch.mean(loss**2)
+        #loss = torch.autograd.grad(loss, w, create_graph=True)[0]
+        #loss = - torch.mean(loss**2)
         #loss = -torch.mean(df_dw[0]**2)
 
         sensitivity_per_weight = -loss.detach().cpu().numpy()
