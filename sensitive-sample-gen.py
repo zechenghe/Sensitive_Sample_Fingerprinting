@@ -168,8 +168,12 @@ def main():
 
     results_diff = []
     sensitivity_per_weight_diff = []
+    activated_neurons_diff = []
+
     results_same = []
     sensitivity_per_weight_same = []
+    activated_neurons_same = []
+
     for file_name in os.listdir(args.input_dir_clean):
         x = utils.read_img(os.path.join(args.input_dir_clean, file_name))
         x_origin = x.clone().detach().cpu().numpy()
@@ -186,13 +190,14 @@ def main():
             early_stop_th=args.sensitivity_per_weight_th,
             lr=0.01,
             n_iter=1000,
-            eps=10.0,
+            eps=15.0,
         )
 
         logits_clean = model(x_ss)
         logits_trojaned = model_trojaned(x_ss)
 
         snr = utils.snr(x_origin, x_ss.detach().cpu().numpy())
+        n_activated_neurons = int(torch.sum(logits_clean > 0))
         print(snr)
 
         if (sensitivity_per_weight > args.sensitivity_per_weight_th) and snr > 0:
@@ -201,9 +206,11 @@ def main():
             if diff:
                 results_diff.append(file_name)
                 sensitivity_per_weight_diff.append(sensitivity_per_weight)
+                activated_neurons_diff.append(n_activated_neurons)
             else:
                 results_same.append(file_name)
                 sensitivity_per_weight_same.append(sensitivity_per_weight)
+                activated_neurons_same.append(n_activated_neurons)
 
             person_name = file_name[:re.search(r"\d", file_name).start()-1]
             utils.save_img(torch.squeeze(x_ss), dir=args.image_save_dir, fname=f"{person_name}_sensitive_sample.png")
@@ -213,6 +220,7 @@ def main():
         success_rate = float(len(results_diff)) / float(n_total + 1e-8)
         print(f"Total {len(results_diff)+len(results_same)} sensitive samples generated. Success rate {success_rate}.")
         print(f"Sensitivity per weight, diff {np.mean(sensitivity_per_weight_diff)}, same {np.mean(sensitivity_per_weight_same)}")
+        print(f"Number of activated neurons, diff {np.mean(activated_neurons_diff)}, same {np.mean(activated_neurons_same)}")
         print("#############")
 
 if __name__ == '__main__':
