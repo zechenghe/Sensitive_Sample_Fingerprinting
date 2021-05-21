@@ -87,9 +87,9 @@ def sensitive_sample_gen(
 
         max_i = torch.argmax(softmax_out)
         df_dw = torch.autograd.grad(torch.log(softmax_out[max_i]), w, create_graph=True)
-        loss = -torch.sum(df_dw[0].pow(2))
+        loss = -torch.mean(torch.square(df_dw[0]))
 
-        sensitivity_per_weight = -loss.detach().cpu().numpy() / torch.numel(w)
+        sensitivity_per_weight = -loss.detach().cpu().numpy()
         print(f"Iter {i}, Sensitivity per weight {sensitivity_per_weight}")
 
         if early_stop and sensitivity_per_weight > early_stop_th:
