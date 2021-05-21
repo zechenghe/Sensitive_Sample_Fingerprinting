@@ -171,6 +171,7 @@ def main():
     sensitivity_per_weight_same = []
     for file_name in os.listdir(args.input_dir_clean):
         x = utils.read_img(os.path.join(args.input_dir_clean, file_name))
+        x_origin = x.clone().detach().cpu().numpy()
         if args.gpu:
             x = x.cuda()
 
@@ -186,7 +187,10 @@ def main():
         logits_clean = model(x_ss)
         logits_trojaned = model_trojaned(x_ss)
 
-        if sensitivity_per_weight > args.sensitivity_per_weight_th:
+        snr = utils.snr(x_origin, x_ss.detach().cpu().numpy())
+        print(snr)
+
+        if (sensitivity_per_weight > args.sensitivity_per_weight_th) and snr > 20:
             diff = utils.is_diff(logits_clean, logits_trojaned, mode='topk', k=1)
 
             if diff:
@@ -196,8 +200,8 @@ def main():
                 results_same.append(file_name)
                 sensitivity_per_weight_same.append(sensitivity_per_weight)
 
-                person_name = file_name[:re.search(r"\d", file_name).start()-1]
-                utils.save_img(torch.squeeze(x_ss), dir=args.image_save_dir, fname=f"{person_name}_sensitive_sample.png")
+            person_name = file_name[:re.search(r"\d", file_name).start()-1]
+            utils.save_img(torch.squeeze(x_ss), dir=args.image_save_dir, fname=f"{person_name}_sensitive_sample.png")
 
         print("#############")
         n_total = len(results_diff)+len(results_same)

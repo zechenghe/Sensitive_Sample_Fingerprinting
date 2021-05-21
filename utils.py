@@ -124,3 +124,12 @@ def is_diff(logits1, logits2, mode='topk', k=None, n_digits=None):
         return not torch.equal(r1, r2)
     else:
         raise NotImplmentedError('Mode is not supported in is_diff()')
+
+
+def snr(x_origin, x):
+
+    MSE = np.mean((x_origin - x)**2)
+    S = np.mean(x_origin**2)
+    SNR = 10*np.log10(S/MSE)
+
+    return SNR
