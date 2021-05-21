@@ -85,9 +85,13 @@ def sensitive_sample_gen(
         softmax_out = F.softmax(logits, dim=-1)
         w = dict(model.named_parameters())['fc8.weight']
 
-        max_i = torch.argmax(softmax_out)
-        df_dw = torch.autograd.grad(torch.log(softmax_out[max_i]), w, create_graph=True)
-        loss = -torch.mean(df_dw[0]**2)
+        #max_i = torch.argmax(softmax_out)
+
+        loss = 0
+        for i in torch.topk(softmax_out, 10):
+            df_dw = torch.autograd.grad(torch.log(softmax_out[i]), w, create_graph=True)
+            loss = loss - torch.mean(df_dw[0]**2)
+        #loss = -torch.mean(df_dw[0]**2)
 
         sensitivity_per_weight = -loss.detach().cpu().numpy()
         print(f"Iter {i}, Sensitivity per weight {sensitivity_per_weight}")
@@ -194,7 +198,7 @@ def main():
             feasibility_constraint=True,
             early_stop=True,
             early_stop_th=args.sensitivity_per_weight_th,
-            lr=0.01,
+            lr=0.1,
             n_iter=1000,
             similarity_mode='l1',
             eps=10.0,
