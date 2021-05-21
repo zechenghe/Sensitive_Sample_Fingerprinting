@@ -117,7 +117,7 @@ def main():
     parser.add_argument('--label_file', type = str, default = 'data/names.txt', help='Labels')
     parser.add_argument('--model_clean', type = str, default = 'model/VGG-face-clean.pt', help='Clean model')
     parser.add_argument('--model_trojaned', type = str, default = 'model/VGG-face-trojaned.pt', help='Trojaned model')
-    parser.add_argument('--sensitivity_per_weight_th', type=float, default = 0.08, help='Threshold to determine if the generation is successful')
+    parser.add_argument('--sensitivity_per_weight_th', type=float, default = 0.0, help='Threshold to determine if the generation is successful')
     parser.add_argument('--gpu', dest='gpu', action='store_true', help='Use gpu')
     parser.set_defaults(gpu=False)
 
@@ -191,7 +191,7 @@ def main():
         snr = utils.snr(x_origin, x_ss.detach().cpu().numpy())
         print(snr)
 
-        if (sensitivity_per_weight > args.sensitivity_per_weight_th) and snr > 18:
+        if (sensitivity_per_weight > args.sensitivity_per_weight_th) and snr > 0:
             diff = utils.is_diff(logits_clean, logits_trojaned, mode='topk', k=1)
 
             if diff:
