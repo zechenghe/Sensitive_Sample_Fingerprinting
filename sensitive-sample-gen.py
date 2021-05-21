@@ -63,7 +63,13 @@ def eval(input_dir, label_file, model, gpu=False, attack_target=0, model2=None):
 
 
 
-def sensitive_sample_gen(x, model, similarity_constraint=True, eps=1.0, feasibility_constraint=True, n_iter=500, lr=1.0, gpu=False, early_stop=False, early_stop_th=1.0):
+def sensitive_sample_gen(
+        x, model,
+        similarity_constraint=True, similarity_mode='l2', eps=1.0,
+        feasibility_constraint=True,
+        n_iter=500, lr=1.0, gpu=False,
+        early_stop=False, early_stop_th=1.0
+    ):
 
     x.requires_grad = True
     x_origin = x.detach().cpu().numpy()
@@ -94,7 +100,7 @@ def sensitive_sample_gen(x, model, similarity_constraint=True, eps=1.0, feasibil
 
         x_new = x.detach().cpu().numpy()
         if similarity_constraint:
-            x_new = utils.similarity_projection(x_origin, x_new, eps)
+            x_new = utils.similarity_projection(x_origin, x_new, eps, mode=similarity_mode)
 
         if feasibility_constraint:
             x_new = utils.feasibility_projection(x_new)
@@ -190,7 +196,8 @@ def main():
             early_stop_th=args.sensitivity_per_weight_th,
             lr=0.1,
             n_iter=1000,
-            eps=5.0,
+            similarity_mode='l1',
+            eps=10.0,
         )
 
         logits_clean = model(x_ss)

@@ -14,7 +14,7 @@ def preprocess(img):
 def deprocess(img):
     return img + averageImage
 
-def similarity_projection(ref, data, eps):
+def similarity_projection(ref, data, eps, mode='l2'):
     """
         Project data to the eps ball of reference.
     """
@@ -22,10 +22,22 @@ def similarity_projection(ref, data, eps):
     eps = np.sqrt(ref.size) * eps
 
     diff = data - ref
-    r = np.sqrt(np.sum(diff**2))
+
+    if mode == 'l1':
+        r = np.max(np.abs(diff))
+    elif mode == 'l2':
+        r = np.sqrt(np.sum(diff**2))
+
+    else:
+        raise NotImplmentedError(f'Mode {mode} is not supported')
 
     if r > eps:
-        new_diff = diff / r * eps
+        if mode == 'l1':
+            new_diff = diff.copy()
+            new_diff[new_diff > eps] = eps
+            new_diff[new_diff < -eps] = -eps
+        elif mode == 'l2':
+            new_diff = diff / r * eps
         new_data = ref + new_diff
     else:
          new_data = data
