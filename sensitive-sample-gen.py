@@ -190,7 +190,7 @@ def main():
         snr = utils.snr(x_origin, x_ss.detach().cpu().numpy())
         print(snr)
 
-        if (sensitivity_per_weight > args.sensitivity_per_weight_th) and snr > 20:
+        if (sensitivity_per_weight > args.sensitivity_per_weight_th) and snr > 18:
             diff = utils.is_diff(logits_clean, logits_trojaned, mode='topk', k=1)
 
             if diff:
