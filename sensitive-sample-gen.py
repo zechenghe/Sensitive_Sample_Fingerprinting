@@ -190,7 +190,7 @@ def main():
             early_stop_th=args.sensitivity_per_weight_th,
             lr=0.1,
             n_iter=1000,
-            eps=20.0,
+            eps=5.0,
         )
 
         logits_clean = model(x_ss)
