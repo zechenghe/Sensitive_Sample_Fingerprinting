@@ -179,8 +179,8 @@ def main():
             x,
             model,
             gpu=args.gpu,
-            eps=10.0,
-            similarity_constraint=False,
+            eps=20.0,
+            similarity_constraint=True,
             feasibility_constraint=True,
         )
 
