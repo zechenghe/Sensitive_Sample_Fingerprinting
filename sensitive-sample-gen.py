@@ -90,7 +90,7 @@ def sensitive_sample_gen(
         loss_sensitivity = -torch.mean(df_dw[0]**2)
 
         loss_TV =  utils.TV(x)
-        loss = loss_sensitivity + 1e-5 * loss_TV
+        loss = loss_sensitivity + 1e-8 * loss_TV
         #max_i = torch.argmax(softmax_out)
         #loss = 0
         #for topi in torch.topk(softmax_out, 1)[1]:
@@ -203,11 +203,11 @@ def main():
             x,
             model,
             gpu=args.gpu,
-            similarity_constraint=False,
+            similarity_constraint=True,
             feasibility_constraint=True,
             early_stop=True,
             early_stop_th=args.sensitivity_per_weight_th,
-            lr=0.1,
+            lr=1.0,
             n_iter=1000,
             similarity_mode='l2',
             eps=10.0,
