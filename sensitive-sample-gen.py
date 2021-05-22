@@ -101,7 +101,7 @@ def sensitive_sample_gen(
         #loss = - torch.mean(loss**2)
         #loss = -torch.mean(df_dw[0]**2)
 
-        sensitivity_per_weight = float(loss_sensitivity)
+        sensitivity_per_weight = -float(loss_sensitivity)
         x_TV = float(loss_TV)
         print(f"Iter {i}, Sensitivity per weight {sensitivity_per_weight}, TV loss {loss_TV}")
 
