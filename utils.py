@@ -65,6 +65,25 @@ def similarity_projection(ref, data, eps):
     return np.float32(new_data)
 
 
+def _tensor_size(t):
+    return t.size()[1]*t.size()[2]*t.size()[3]
+
+def TV(x):
+
+    """
+        Total variation of an image.
+    """
+
+    batch_size = x.size()[0]
+    h_x = x.size()[2]
+    w_x = x.size()[3]
+    count_h = _tensor_size(x[:,:,1:,:])
+    count_w = _tensor_size(x[:,:,:,1:])
+    h_tv = torch.pow(x[:,:,1:,:]-x[:,:,:h_x-1,:], 2).sum()
+    w_tv = torch.pow(x[:,:,:,1:]-x[:,:,:,:w_x-1], 2).sum()
+    return (h_tv / count_h + w_tv / count_w) / batch_size
+
+
 def feasibility_projection(data):
 
     if data.ndim == 4:
