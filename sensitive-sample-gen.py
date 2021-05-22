@@ -136,7 +136,7 @@ def main():
     parser.add_argument('--label_file', type = str, default = 'data/names.txt', help='Labels')
     parser.add_argument('--model_clean', type = str, default = 'model/VGG-face-clean.pt', help='Clean model')
     parser.add_argument('--model_trojaned', type = str, default = 'model/VGG-face-trojaned.pt', help='Trojaned model')
-    parser.add_argument('--sensitivity_per_weight_th', type=float, default = 1e-4, help='Threshold to determine if the generation is successful')
+    parser.add_argument('--sensitivity_per_weight_th', type=float, default = 5e-4, help='Threshold to determine if the generation is successful')
     parser.add_argument('--gpu', dest='gpu', action='store_true', help='Use gpu')
     parser.set_defaults(gpu=False)
 
@@ -232,8 +232,8 @@ def main():
                 sensitivity_per_weight_same.append(sensitivity_per_weight)
                 activated_neurons_same.append(n_activated_neurons)
 
-        person_name = file_name[:re.search(r"\d", file_name).start()-1]
-        utils.save_img(torch.squeeze(x_ss), dir=args.image_save_dir, fname=f"{person_name}_sensitive_sample.png")
+            person_name = file_name[:re.search(r"\d", file_name).start()-1]
+            utils.save_img(torch.squeeze(x_ss), dir=args.image_save_dir, fname=f"{person_name}_sensitive_sample.png")
 
         print("#############")
         n_total = len(results_diff)+len(results_same)
