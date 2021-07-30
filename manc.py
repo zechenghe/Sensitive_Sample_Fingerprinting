@@ -33,6 +33,8 @@ def main():
     parser.add_argument('--model_trojaned', type = str, default = 'model/VGG-face-trojaned.pt', help='Trojaned model')
     parser.add_argument('--input_dir_trojaned', type = str, default = 'data/VGGFace-Trojaned', help='Directory of trojaned data')
 
+    args = parser.parse_args()
+
     model = net.VGG16FaceNet()
     model.load_state_dict(torch.load(args.model_clean))
 
