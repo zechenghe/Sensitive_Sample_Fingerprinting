@@ -56,3 +56,7 @@ def main():
             gpu=args.gpu
         )
         print(f"Trojaned model on trojaned inputs attack_success_rate: {attack_success_rate}")
+
+
+if __name__ == '__main__':
+    main()
