@@ -21,7 +21,7 @@ def main():
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--input_dir', type = str, default = 'generate/', help='Directory of sensitive samples')
+    parser.add_argument('--candidate_dir', type = str, default = 'generate/', help='Directory of candidate sensitive samples')
     parser.add_argument('--manc_save_dir', type = str, default = 'generate/manc/', help='Directory to save MANC images')
     parser.add_argument('--model_clean', type = str, default = 'model/VGG-face-clean.pt', help='Clean model')
 
