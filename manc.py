@@ -33,6 +33,9 @@ def main():
     parser.add_argument('--model_trojaned', type = str, default = 'model/VGG-face-trojaned.pt', help='Trojaned model')
     parser.add_argument('--input_dir_trojaned', type = str, default = 'data/VGGFace-Trojaned', help='Directory of trojaned data')
 
+    parser.add_argument('--nosanity_check', dest='sanity_check', action='store_false', help='Sanity check. Evaluate models before sample generation')
+    parser.set_defaults(sanity_check=True)
+
     args = parser.parse_args()
 
     model = net.VGG16FaceNet()
