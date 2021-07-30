@@ -1,5 +1,6 @@
 import os
 import re
+
 import numpy as np
 import pathlib
 import torch
@@ -206,7 +207,6 @@ def eval(input_dir, label_file, model, gpu=False, attack_target=0, model2=None):
         label = name_to_label[name]
 
         img = read_img(os.path.join(input_dir, file_name))
-        img = torch.unsqueeze(img, 0)
 
         if gpu:
             img = img.cuda()
