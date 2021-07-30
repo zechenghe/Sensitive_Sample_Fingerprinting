@@ -13,55 +13,6 @@ import net
 import utils
 
 
-def eval(input_dir, label_file, model, gpu=False, attack_target=0, model2=None):
-    """
-        Evaluate model accuracy (and attack success rate on a trojaned dataset).
-    """
-
-    name_to_label, label_to_name = utils.get_label(label_file)
-    pred_labels = []
-    if model2 is not None:
-        pred_labels2 = []
-    ground_truth = []
-
-    for file_name in os.listdir(input_dir):
-        if file_name.startswith('.'):
-            continue
-
-        name = file_name[:re.search(r"\d", file_name).start()-1]
-        label = name_to_label[name]
-
-        img = utils.read_img(os.path.join(input_dir, file_name))
-        img = torch.unsqueeze(img, 0)
-
-        if gpu:
-            img = img.cuda()
-
-        logits = torch.squeeze(model(img))
-        pred_label = torch.argmax(logits)
-
-        pred_labels.append(pred_label.detach().cpu().numpy())
-        ground_truth.append(label)
-
-        if model2 is not None:
-            logits2 = torch.squeeze(model2(img))
-            pred_label2 = torch.argmax(logits2)
-            pred_labels2.append(pred_label2.detach().cpu().numpy())
-
-    pred_labels = np.array(pred_labels)
-    ground_truth = np.array(ground_truth)
-    acc = np.mean(pred_labels == ground_truth)
-    attack_success_rate = np.mean(pred_labels == np.array([attack_target]*len(pred_labels)))
-
-    if model2 is None:
-        return acc, attack_success_rate
-    else:
-        pred_labels2 = np.array(pred_labels2)
-        acc2 = np.mean(pred_labels2 == ground_truth)
-        model_diff = np.mean(pred_labels != pred_labels2)
-        return acc, acc2, model_diff
-
-
 
 def sensitive_sample_gen(
         x, model,
@@ -164,7 +115,7 @@ def main():
     if args.sanity_check:
         # Accuracy of clean and trojaned models
         # Percentage of inputs that are predicted differently
-        accuracy_model_clean, accuracy_model_trojaned, model_diff = eval(
+        accuracy_model_clean, accuracy_model_trojaned, model_diff = utils.eval(
             input_dir=args.input_dir_clean,
             label_file=args.label_file,
             model=model,
@@ -176,7 +127,7 @@ def main():
         print(f"model_diff on clean inputs: {model_diff}")
 
         # Attack success rate of the trojaned model
-        _, attack_success_rate = eval(
+        _, attack_success_rate = utils.eval(
             input_dir=args.input_dir_trojaned,
             label_file=args.label_file,
             model=model_trojaned,

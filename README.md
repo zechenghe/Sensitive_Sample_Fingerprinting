@@ -4,6 +4,8 @@ This code implements model inversion attacks against collaborative inference in 
 
 Zecheng He, Tianwei Zhang, and Ruby Lee, "Sensitive-sample Fingerprinting of Deep Neural Networks", IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 2019
 
+    python3 sensitive-sample-gen.py --gpu --nosanity_check
+
 # Reference
 You are encouraged to cite the following papers.
 ```
