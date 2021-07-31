@@ -113,7 +113,8 @@ def read_img(fname):
         Returns:
             A 4-d tensor [b, c, h, w]
     """
-    img = matplotlib.pyplot.imread(fname)
+
+    img = matplotlib.pyplot.imread(fname)[:, :, :3]     # matplotlib.pyplot.imsave saves an extra alpha channel
     img = preprocess(img)
     img = np.moveaxis(img, -1, 0)
     return torch.unsqueeze(torch.tensor(img.astype(np.float32)), 0)
