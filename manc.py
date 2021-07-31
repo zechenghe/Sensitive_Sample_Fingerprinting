@@ -86,7 +86,7 @@ def main():
         img = utils.read_img(os.path.join(args.candidate_dir, file_name))
         candidates.append(img)
 
-    candidates = torch.concatenate(candidates, dim=0)
+    candidates = torch.cat(candidates, dim=0)
     print(candidates.size())
 
 if __name__ == '__main__':
