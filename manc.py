@@ -83,7 +83,7 @@ def main():
         if file_name.startswith('.'):
             continue
 
-        img = utils.read_img(os.path.join(input_dir, file_name))
+        img = utils.read_img(os.path.join(args.candidate_dir, file_name))
         candidates.append(img)
 
     candidates = torch.stack(candidates, dim=0)
