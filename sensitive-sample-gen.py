@@ -12,8 +12,6 @@ import torchvision
 import net
 import utils
 
-
-
 def sensitive_sample_gen(
         x, model,
         similarity_constraint=True, similarity_mode='l2', eps=1.0,
