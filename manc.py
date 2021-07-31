@@ -78,6 +78,16 @@ def main():
         )
         print(f"Trojaned model on trojaned inputs attack_success_rate: {attack_success_rate}")
 
+    candidates = []
+    for file_name in os.listdir(candidate_dir):
+        if file_name.startswith('.'):
+            continue
+
+        img = utils.read_img(os.path.join(input_dir, file_name))
+        candidates.append(img)
+
+    candidates = torch.stack(candidates, dim=0)
+    print(candidates.size())
 
 if __name__ == '__main__':
     main()
