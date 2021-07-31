@@ -82,7 +82,7 @@ def main():
     for file_name in os.listdir(candidate_dir):
         if file_name.startswith('.'):
             continue
-
+            
         img = utils.read_img(os.path.join(input_dir, file_name))
         candidates.append(img)
 
