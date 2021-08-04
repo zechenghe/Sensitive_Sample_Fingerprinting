@@ -235,3 +235,26 @@ def eval(input_dir, label_file, model, gpu=False, attack_target=0, model2=None):
         acc2 = np.mean(pred_labels2 == ground_truth)
         model_diff = np.mean(pred_labels != pred_labels2)
         return acc, acc2, model_diff
+
+
+def pred_diff(candidates, model_clean, model_trojaned):
+
+    """
+        Evaluate the difference of model predictions
+        Args:
+            candidates: input samples,
+            model_clean: clean model,
+            model_trojaned: trojaned model,
+        Returns:
+            Portion of input data whose output are different.
+    """
+
+    def eval_model(data, model):
+        logits = torch.squeeze(model(data))
+        predicts = torch.argmax(logits)
+        return predicts.detach().cpu().numpy()
+
+    pred_clean = eval_model(candidates, model_clean)
+    pred_trojaned = eval_model(candidates, model_trojaned)
+
+    return np.mean(pred_clean != pred_trojaned)
