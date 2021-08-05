@@ -80,7 +80,7 @@ def main():
         print(f"Trojaned model on trojaned inputs attack_success_rate: {attack_success_rate}")
 
     candidates = []
-    for file in glob.glob(os.path.join(args.candidate_dir, '*.png')):
+    for file in glob.glob(os.path.join(args.candidate_dir, '*.npy')):
 
         img = utils.read_img(file)
         candidates.append(img)
