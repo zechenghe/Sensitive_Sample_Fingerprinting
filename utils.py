@@ -271,11 +271,10 @@ def pred_diff(candidates, model_clean, model_trojaned, verbose=False):
 
     for batch_idx, candidate in enumerate(data_loader):
 
-        print(candidate.size())
-
         pred_clean = eval_model(candidate, model_clean)
         pred_trojaned = eval_model(candidate, model_trojaned)
 
+        print(pred_clean)
         n_total += len(pred_clean)
         n_diff += np.sum(pred_clean != pred_trojaned)
 
