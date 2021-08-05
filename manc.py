@@ -38,7 +38,8 @@ def manc(candidates, model, n_samples):
 
     candidates_activation = torch.cat(activation_maps, axis=0)
     current_union_map = torch.zeros(size=candidates_activation[0].size(), dtype=torch.bool)
-
+    if candidates_activation.is_cuda:
+        current_union_map = current_union_map.cuda()
     #for act in candidates_activation:
     #    print(act.size(), torch.sum(act))
 
