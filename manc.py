@@ -37,13 +37,21 @@ def manc(candidates, model, n_samples):
         activation_maps.append(activation)
 
     candidates_activation = torch.cat(activation_maps, axis=0)
+    print(type(candidates_activation))
+    print(candidates_activation)
+    current_union_map = torch.zeros(size=candidates_activation[0].size())
 
-    for act in candidates_activation:
-        print(act.size(), torch.sum(act))
+    #for act in candidates_activation:
+    #    print(act.size(), torch.sum(act))
 
-    selected = []
+    selected = set()
+    remaining = set(range(len(candidates_activation)))
+
     for i in range(n_samples):
-        pass
+
+
+
+    return candidates[selected]
 
 
 
@@ -74,11 +82,6 @@ def main():
 
     model_trojaned = net.VGG16FaceNet()
     model_trojaned.load_state_dict(torch.load(args.model_trojaned))
-
-    #for m in [model, model_trojaned]:
-    #    for p in m.parameters():
-    #        print(p.requires_grad)
-    #        p.requires_grad = True
 
     if args.gpu:
         torch.cuda.empty_cache()
@@ -114,7 +117,7 @@ def main():
         candidates.append(img)
 
     candidates = torch.cat(candidates, dim=0)
-    print(candidates.size())
+    print("candidates.size()", candidates.size())
 
     if args.gpu:
         candidates = candidates.cuda()
