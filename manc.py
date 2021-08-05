@@ -48,7 +48,7 @@ def manc(candidates, model, n_samples):
     remaining = set(range(len(candidates_activation)))
 
     for i in range(n_samples):
-
+        pass
 
 
     return candidates[selected]
