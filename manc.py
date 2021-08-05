@@ -139,6 +139,8 @@ def main():
     for trial in range(args.n_trials):
         perm = torch.randperm(candidates.size(0))
         candidates_selected = manc(candidates[perm[:args.n_candidates_per_bag]], model, n_samples=args.n_samples)
+
+        print(candidates_selected.size())
         diff = utils.pred_diff(candidates_selected, model, model_trojaned, verbose=False)
         res.append(1 if diff > 0 else 0)
         print(f"MANK {diff} candidates cause different outputs. Total {np.mean(res)} succeeds.")
