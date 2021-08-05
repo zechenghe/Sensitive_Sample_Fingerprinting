@@ -37,9 +37,7 @@ def manc(candidates, model, n_samples):
         activation_maps.append(activation)
 
     candidates_activation = torch.cat(activation_maps, axis=0)
-    print(type(candidates_activation))
-    print(candidates_activation)
-    current_union_map = torch.zeros(size=candidates_activation[0].size())
+    current_union_map = torch.zeros(size=candidates_activation[0].size(), type=torch.bool)
 
     #for act in candidates_activation:
     #    print(act.size(), torch.sum(act))
@@ -47,9 +45,13 @@ def manc(candidates, model, n_samples):
     selected = set()
     remaining = set(range(len(candidates_activation)))
 
-    for i in range(n_samples):
-        pass
+    for idx in range(n_samples):
+        n_joint_activated = [torch.sum(current_union_map | candidates_activation[i]) for i in remaining]
+        current_selected_idx = np.argmax(n_joint_activated)
 
+        selected.add(current_selected_idx)
+        remaining.remove(current_selected_idx)
+        current_union_map = current_union_map | candidates_activation[current_selected_idx]
 
     return candidates[selected]
 
