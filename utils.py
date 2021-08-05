@@ -128,8 +128,6 @@ def read_img(fname):
     return torch.unsqueeze(torch.tensor(img.astype(np.float32)), 0)
 
 
-
-
 def save_img(img, dir, fname):
     """
         Args:

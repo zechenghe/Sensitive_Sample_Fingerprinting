@@ -18,6 +18,33 @@ import utils
 import glob
 
 
+def manc(candidates, model, n_samples):
+    """
+        Maximum Activated Neuron Cover (MANC) for sensitive-samples selection
+        Args:
+            candidates: a bag of candidate sensitive samples, [b, c, h, w]
+            model: clean model
+            n_samples: number of selected samples
+        Returns:
+            Selected sensitive samples [n_samples, c, h, w]
+    """
+
+    data_loader = torch.utils.data.DataLoader(candidates, batch_size=64)
+
+    activation_maps = []
+    for batch_idx, batch in enumerate(data_loader):
+        activation = model.forward(batch, end_layer_name='pool5')
+        activation_maps.append(activation)
+
+    for act in activation_maps:
+        print(act.size())
+
+    selected = []
+    for i in range(n_samples):
+        pass
+
+
+
 def main():
 
     parser = argparse.ArgumentParser()
@@ -81,7 +108,6 @@ def main():
 
     candidates = []
     for file in glob.glob(os.path.join(args.candidate_dir, '*.npy')):
-
         img = utils.read_img(file)
         candidates.append(img)
 
@@ -92,7 +118,11 @@ def main():
         candidates = candidates.cuda()
 
     diff = utils.pred_diff(candidates, model, model_trojaned, verbose=True)
-    print(f"{diff} candidates cause different outputs.")
+    print(f"Without MANK {diff} candidates cause different outputs.")
+
+    candidates_selected = manc(candidates, model, n_samples=10)
+    diff = utils.pred_diff(candidates, model, model_trojaned, verbose=True)
+    print(f"MANK {diff} candidates cause different outputs.")
 
 if __name__ == '__main__':
     main()

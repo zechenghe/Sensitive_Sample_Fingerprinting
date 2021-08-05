@@ -93,15 +93,19 @@ class VGG16FaceNet(nn.Module):
             ('fc8', self.fc8),
         ])
 
-    def forward(self, x):
+    def forward(self, x, end_layer_name=None):
 
         for name, layer in self.features.items():
             # Kernel size = 3, pad input to simulate 'same size' convolution
             if 'conv' in name:
                 x = F.pad(x, (1, 1, 1, 1))
             x = layer(x)
+            if name == end_layer_name:
+                return x
 
         x = torch.flatten(x, 1)
         for name, layer in self.classifier.items():
             x = layer(x)
+            if name == end_layer_name:
+                return x
         return x
