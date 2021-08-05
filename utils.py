@@ -114,14 +114,20 @@ def read_img(fname):
             A 4-d tensor [b, c, h, w]
     """
 
-    if fname.endswith('.png') or fname.endswith('.jpg'):
+    if fname.endswith('.jpg'):
+        img = matplotlib.pyplot.imread(fname)
+    elif fname.endswith('.png'):
         img = matplotlib.pyplot.imread(fname)[:, :, :3]     # matplotlib.pyplot.imsave saves an extra alpha channel
     elif fname.endswith('.npy'):
         img = np.load(fname)
+    else:
+        raise NotImplementedError
 
     img = preprocess(img)
     img = np.moveaxis(img, -1, 0)
     return torch.unsqueeze(torch.tensor(img.astype(np.float32)), 0)
+
+
 
 
 def save_img(img, dir, fname):
