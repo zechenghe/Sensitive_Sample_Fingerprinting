@@ -11,7 +11,6 @@ import torchvision
 
 import net
 import utils
-import glob
 
 def sensitive_sample_gen(
         x, model,
@@ -143,7 +142,7 @@ def main():
     sensitivity_per_weight_same = []
     activated_neurons_same = []
 
-    for file_name in glob.glob(os.path.join(args.input_dir_clean, '*.jpg')):
+    for file_name in os.listdir(args.input_dir_clean):
         x = utils.read_img(os.path.join(args.input_dir_clean, file_name))
         x_origin = x.clone().detach().cpu().numpy()
         if args.gpu:
