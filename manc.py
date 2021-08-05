@@ -51,7 +51,7 @@ def manc(candidates, model, n_samples):
 
         print(n_joint_activated)
 
-        current_selected_idx = np.max(n_joint_activated)[1]
+        current_selected_idx = max(n_joint_activated)[1]
 
         print('selected', selected)
         print('remaining', remaining)
