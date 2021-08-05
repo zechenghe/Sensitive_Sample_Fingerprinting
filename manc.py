@@ -33,7 +33,7 @@ def manc(candidates, model, n_samples):
 
     activation_maps = []
     for batch_idx, batch in enumerate(data_loader):
-        activation = model.forward(batch, end_layer_name='fc7') > 0
+        activation = model.forward(batch, end_layer_name='pool4') > 0
         activation_maps.append(activation)
 
     candidates_activation = torch.cat(activation_maps, axis=0)
@@ -138,8 +138,8 @@ def main():
     res = []
     for trial in range(args.n_trials):
         perm = torch.randperm(candidates.size(0))
-        #candidates_selected = manc(candidates[perm[:args.n_candidates_per_bag]], model, n_samples=args.n_samples)
-        candidates_selected = torch.unsqueeze(candidates[perm[:args.n_candidates_per_bag]][0], 0)
+        candidates_selected = manc(candidates[perm[:args.n_candidates_per_bag]], model, n_samples=args.n_samples)
+        #candidates_selected = torch.unsqueeze(candidates[perm[:args.n_candidates_per_bag]][0], 0)
 
         diff = utils.pred_diff(candidates_selected, model, model_trojaned, verbose=False)
         res.append(1 if diff > 0 else 0)
