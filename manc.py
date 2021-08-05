@@ -58,7 +58,7 @@ def manc(candidates, model, n_samples):
     if len(res.size()) != len(candidates.size()):     # n_sample = 1, the batch dim is eliminated
         res = torch.unsqueeze(res, 0)
 
-    return candidates[np.array(list(selected))]
+    return res
 
 
 def main():
