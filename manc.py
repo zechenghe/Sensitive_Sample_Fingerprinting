@@ -61,7 +61,7 @@ def manc(candidates, model, n_samples):
         remaining.remove(current_selected_idx)
         current_union_map = current_union_map | candidates_activation[current_selected_idx]
 
-    return candidates[selected]
+    return candidates[np.array(selected)]
 
 
 
