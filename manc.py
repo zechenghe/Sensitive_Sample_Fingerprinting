@@ -15,6 +15,7 @@ import torchvision
 
 import net
 import utils
+import glob
 
 
 def main():
@@ -79,9 +80,7 @@ def main():
         print(f"Trojaned model on trojaned inputs attack_success_rate: {attack_success_rate}")
 
     candidates = []
-    for file_name in os.listdir(args.candidate_dir):
-        if file_name.startswith('.'):
-            continue
+    for file_name in glob.glob(os.path.join(args.candidate_dir, '*.png')):
 
         img = utils.read_img(os.path.join(args.candidate_dir, file_name))
         candidates.append(img)
