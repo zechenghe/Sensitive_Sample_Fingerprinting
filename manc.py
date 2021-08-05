@@ -36,8 +36,9 @@ def manc(candidates, model, n_samples):
         activation = model.forward(batch, end_layer_name='pool5') > 0
         activation_maps.append(activation)
 
-    for act in activation_maps:
-        print(act.size(), torch.sum(act))
+    for batch_act in activation_maps:
+        for act in batch_act:
+            print(act.size(), torch.sum(act))
 
     selected = []
     for i in range(n_samples):
@@ -117,11 +118,11 @@ def main():
     if args.gpu:
         candidates = candidates.cuda()
 
-    diff = utils.pred_diff(candidates, model, model_trojaned, verbose=True)
+    diff = utils.pred_diff(candidates, model, model_trojaned, verbose=False)
     print(f"Without MANK {diff} candidates cause different outputs.")
 
     candidates_selected = manc(candidates, model, n_samples=10)
-    diff = utils.pred_diff(candidates, model, model_trojaned, verbose=True)
+    diff = utils.pred_diff(candidates, model, model_trojaned, verbose=False)
     print(f"MANK {diff} candidates cause different outputs.")
 
 if __name__ == '__main__':
