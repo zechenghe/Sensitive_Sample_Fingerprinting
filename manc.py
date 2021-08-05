@@ -67,6 +67,7 @@ def main():
     parser.add_argument('--model_clean', type = str, default = 'model/VGG-face-clean.pt', help='Clean model')
 
     parser.add_argument('--label_file', type = str, default = 'data/names.txt', help='Labels')
+    parser.add_argument('--n_trials', type = int, default = 1000, help='Number of MANC trails to get success rate')
     parser.add_argument('--gpu', dest='gpu', action='store_true', help='Use gpu')
     parser.set_defaults(gpu=False)
 
@@ -128,9 +129,13 @@ def main():
     diff = utils.pred_diff(candidates, model, model_trojaned, verbose=False)
     print(f"Without MANK {diff} candidates cause different outputs.")
 
-    candidates_selected = manc(candidates, model, n_samples=10)
-    diff = utils.pred_diff(candidates_selected, model, model_trojaned, verbose=False)
-    print(f"MANK {diff} candidates cause different outputs.")
+    res = []
+    for trial in range(n_trials):
+        perm = torch.randperm(candidates.size(0))
+        candidates_selected = manc(candidates[perm[:100]], model, n_samples=10)
+        diff = utils.pred_diff(candidates_selected, model, model_trojaned, verbose=False)
+        res.append(1 if diff > 0 else 0)
+        print(f"MANK {diff} candidates cause different outputs. Total {mean(res)} succeeds.")
 
 if __name__ == '__main__':
     main()
