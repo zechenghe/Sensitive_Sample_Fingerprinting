@@ -54,6 +54,8 @@ def manc(candidates, model, n_samples):
         remaining.remove(current_selected_idx)
         current_union_map = current_union_map | candidates_activation[current_selected_idx]
 
+        print(f"Total activate {torch.sum(current_union_map)} neurons")
+
     res = candidates[np.array(list(selected))]
     if len(res.size()) != len(candidates.size()):     # n_sample = 1, the batch dim is eliminated
         res = torch.unsqueeze(res, 0)
@@ -143,7 +145,7 @@ def main():
 
         diff = utils.pred_diff(candidates_selected, model, model_trojaned, verbose=False)
         res.append(1 if diff > 0 else 0)
-        print(f"MANK {diff} candidates cause different outputs. Total {np.mean(res)} succeeds.")
+        print(f"MANC {diff} candidates cause different outputs. Total {np.mean(res)} succeeds.")
 
 if __name__ == '__main__':
     main()
