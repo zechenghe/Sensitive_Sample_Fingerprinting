@@ -262,7 +262,7 @@ def pred_diff(candidates, model_clean, model_trojaned, verbose=False):
     def eval_model(data, model):
         logits = torch.squeeze(model(data))
         predicts = torch.argmax(logits, dim=-1)
-        return predicts.detach().cpu().numpy()
+        return np.array(predicts.detach().cpu().numpy())    # np.array() to handle scalar if batch_size=1
 
     n_total = 0.0
     n_diff = 0.0
