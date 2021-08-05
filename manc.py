@@ -47,10 +47,11 @@ def manc(candidates, model, n_samples):
     remaining = set(range(len(candidates_activation)))
 
     for idx in range(n_samples):
-        n_joint_activated = [(sum(current_union_map | candidates_activation[i]), i) for i in remaining]
+        n_joint_activated = [(torch.sum(current_union_map | candidates_activation[i]), i) for i in remaining]
+
         print(n_joint_activated)
 
-        current_selected_idx = np.max(n_joint_activated)[1]
+        current_selected_idx = torch.max(n_joint_activated)[1]
 
         print('selected', selected)
         print('remaining', remaining)
