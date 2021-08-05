@@ -258,6 +258,8 @@ def pred_diff(candidates, model_clean, model_trojaned, verbose=False):
     n_diff = 0.0
     data_loader = torch.utils.data.DataLoader(candidates, batch_size=32)
     for batch_idx, candidate in enumerate(data_loader):
+        print(candidate.size)
+
         pred_clean = eval_model(candidate, model_clean)
         pred_trojaned = eval_model(candidate, model_trojaned)
 
