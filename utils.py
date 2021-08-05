@@ -259,8 +259,9 @@ def pred_diff(candidates, model_clean, model_trojaned, verbose=False):
 
     candidates_dataset = torch.utils.data.TensorDataset(candidates)
     data_loader = torch.utils.data.DataLoader(candidates_dataset, batch_size=32)
+
     for batch_idx, candidate in enumerate(data_loader):
-        print(candidate.size)
+        print(candidate)
 
         pred_clean = eval_model(candidate, model_clean)
         pred_trojaned = eval_model(candidate, model_trojaned)
