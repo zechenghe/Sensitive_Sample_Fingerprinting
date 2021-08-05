@@ -33,7 +33,7 @@ def manc(candidates, model, n_samples):
 
     activation_maps = []
     for batch_idx, batch in enumerate(data_loader):
-        activation = model.forward(batch, end_layer_name='pool4') > 0
+        activation = model.forward(batch, end_layer_name='fc8') > 0
         activation_maps.append(activation)
 
     candidates_activation = torch.cat(activation_maps, axis=0)
