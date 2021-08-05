@@ -29,16 +29,17 @@ def manc(candidates, model, n_samples):
             Selected sensitive samples [n_samples, c, h, w]
     """
 
-    data_loader = torch.utils.data.DataLoader(candidates, batch_size=64)
+    data_loader = torch.utils.data.DataLoader(candidates, batch_size=8)
 
     activation_maps = []
     for batch_idx, batch in enumerate(data_loader):
         activation = model.forward(batch, end_layer_name='pool5') > 0
         activation_maps.append(activation)
 
-    for batch_act in activation_maps:
-        for act in batch_act:
-            print(act.size(), torch.sum(act))
+    candidates_activation = torch.cat(activation_maps, axis=0)
+
+    for act in candidates_activation:
+        print(act.size(), torch.sum(act))
 
     selected = []
     for i in range(n_samples):
@@ -122,7 +123,7 @@ def main():
     print(f"Without MANK {diff} candidates cause different outputs.")
 
     candidates_selected = manc(candidates, model, n_samples=10)
-    diff = utils.pred_diff(candidates, model, model_trojaned, verbose=False)
+    diff = utils.pred_diff(candidates_selected, model, model_trojaned, verbose=False)
     print(f"MANK {diff} candidates cause different outputs.")
 
 if __name__ == '__main__':
