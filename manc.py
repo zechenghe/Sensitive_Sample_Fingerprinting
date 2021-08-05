@@ -55,7 +55,7 @@ def manc(candidates, model, n_samples):
         current_union_map = current_union_map | candidates_activation[current_selected_idx]
 
     res = candidates[np.array(list(selected))]
-    if len(res.size()) != len(candidates.size):     # n_sample = 1, the batch dim is eliminated
+    if len(res.size()) != len(candidates.size()):     # n_sample = 1, the batch dim is eliminated
         res = torch.unsqueeze(res, 0)
 
     return candidates[np.array(list(selected))]
