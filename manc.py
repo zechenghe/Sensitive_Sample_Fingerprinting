@@ -37,7 +37,7 @@ def manc(candidates, model, n_samples):
         activation_maps.append(activation)
 
     candidates_activation = torch.cat(activation_maps, axis=0)
-    current_union_map = torch.zeros(size=candidates_activation[0].size(), type=torch.bool)
+    current_union_map = torch.zeros(size=candidates_activation[0].size(), dtype=torch.bool)
 
     #for act in candidates_activation:
     #    print(act.size(), torch.sum(act))
