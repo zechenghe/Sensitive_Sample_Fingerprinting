@@ -138,7 +138,7 @@ def main():
         candidates_selected = manc(candidates[perm[:args.n_candidates_per_bag]], model, n_samples=args.n_samples)
         diff = utils.pred_diff(candidates_selected, model, model_trojaned, verbose=False)
         res.append(1 if diff > 0 else 0)
-        print(f"MANK {diff} candidates cause different outputs. Total {mean(res)} succeeds.")
+        print(f"MANK {diff} candidates cause different outputs. Total {np.mean(res)} succeeds.")
 
 if __name__ == '__main__':
     main()
