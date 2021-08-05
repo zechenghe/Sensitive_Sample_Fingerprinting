@@ -33,11 +33,11 @@ def manc(candidates, model, n_samples):
 
     activation_maps = []
     for batch_idx, batch in enumerate(data_loader):
-        activation = model.forward(batch, end_layer_name='pool5')
+        activation = model.forward(batch, end_layer_name='pool5') > 0
         activation_maps.append(activation)
 
     for act in activation_maps:
-        print(act.size())
+        print(act.size(), torch.sum(act))
 
     selected = []
     for i in range(n_samples):
