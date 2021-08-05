@@ -237,7 +237,7 @@ def eval(input_dir, label_file, model, gpu=False, attack_target=0, model2=None):
         return acc, acc2, model_diff
 
 
-def pred_diff(candidates, model_clean, model_trojaned):
+def pred_diff(candidates, model_clean, model_trojaned, verbose=False):
 
     """
         Evaluate the difference of model predictions
@@ -254,7 +254,17 @@ def pred_diff(candidates, model_clean, model_trojaned):
         predicts = torch.argmax(logits)
         return predicts.detach().cpu().numpy()
 
-    pred_clean = eval_model(candidates, model_clean)
-    pred_trojaned = eval_model(candidates, model_trojaned)
+    n_total = 0.0
+    n_diff = 0.0
+    data_loader = torch.data.utils.DataLoader(candidates, batch_size=32)
+    for batch_idx, candidate in enumerate(data_loader):
+        pred_clean = eval_model(candidate, model_clean)
+        pred_trojaned = eval_model(candidate, model_trojaned)
 
-    return np.mean(pred_clean != pred_trojaned)
+        n_total += len(pred_clean)
+        n_diff += np.sum(pred_clean != pred_trojaned)
+
+        if verbose:
+            print(f"Batch {batch_idx}, {len(pred_clean)} samples, current total diff rate {n_diff/n_total}", )
+
+    return n_diff / n_total

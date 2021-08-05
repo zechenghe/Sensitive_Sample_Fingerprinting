@@ -91,7 +91,7 @@ def main():
 
     if args.gpu:
         candidates = candidates.cuda()
-
+    
     diff = utils.pred_diff(candidates, model, model_trojaned)
     print(f"{diff} candidates cause different outputs.")
 
