@@ -132,7 +132,9 @@ def save_img(img, dir, fname):
     img = deprocess(img)
 
     pathlib.Path(dir).mkdir(parents=True, exist_ok=True)
-    matplotlib.pyplot.imsave(os.path.join(dir, fname), np.uint8(img))
+    matplotlib.pyplot.imsave(os.path.join(dir, fname + '.png'), np.uint8(img))
+    np.save(os.path.join(dir, fname), img)
+
     return
 
 

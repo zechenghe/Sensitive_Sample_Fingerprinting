@@ -182,7 +182,8 @@ def main():
                 activated_neurons_same.append(n_activated_neurons)
 
             person_name = file_name[:re.search(r"\d", file_name).start()-1]
-            utils.save_img(torch.squeeze(x_ss), dir=args.image_save_dir, fname=f"{person_name}_sensitive_sample.png")
+            utils.save_img(torch.squeeze(x_ss), dir=args.image_save_dir, fname=f"{person_name}_sensitive_sample")
+
 
         print("#############")
         n_total = len(results_diff)+len(results_same)
