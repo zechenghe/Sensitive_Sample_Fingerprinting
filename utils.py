@@ -257,10 +257,7 @@ def pred_diff(candidates, model_clean, model_trojaned, verbose=False):
     n_total = 0.0
     n_diff = 0.0
 
-    print(type(candidates))
-
-    candidates_dataset = torch.utils.data.TensorDataset(candidates)
-    data_loader = torch.utils.data.DataLoader(candidates_dataset, batch_size=32)
+    data_loader = torch.utils.data.DataLoader(candidates, batch_size=32)
 
     for batch_idx, candidate in enumerate(data_loader):
         print(candidate)
