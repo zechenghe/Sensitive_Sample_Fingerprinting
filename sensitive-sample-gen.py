@@ -38,7 +38,7 @@ def sensitive_sample_gen(
         df_dw = torch.autograd.grad(softmax_out[max_i], w, create_graph=True)
         loss_sensitivity = -torch.mean(df_dw[0]**2)
 
-        loss_TV =  utils.TV(x)
+        loss_TV = utils.TV(x)
         loss = loss_sensitivity + 1e-8 * loss_TV
         #max_i = torch.argmax(softmax_out)
         #loss = 0
@@ -99,11 +99,6 @@ def main():
 
     model_trojaned = net.VGG16FaceNet()
     model_trojaned.load_state_dict(torch.load(args.model_trojaned))
-
-    #for m in [model, model_trojaned]:
-    #    for p in m.parameters():
-    #        print(p.requires_grad)
-    #        p.requires_grad = True
 
     if args.gpu:
         torch.cuda.empty_cache()
