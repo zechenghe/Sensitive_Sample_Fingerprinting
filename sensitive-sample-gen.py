@@ -89,6 +89,8 @@ def main():
     parser.add_argument('--label_file', type = str, default = 'data/names.txt', help='Labels')
     parser.add_argument('--model_clean', type = str, default = 'model/VGG-face-clean.pt', help='Clean model')
     parser.add_argument('--model_trojaned', type = str, default = 'model/VGG-face-trojaned.pt', help='Trojaned model')
+    parser.add_argument('--early_stop', dest='early_stop', action='store_true', help='Early stop')
+    parser.set_defaults(early_stop=False)
     parser.add_argument('--sensitivity_per_weight_th', type=float, default = 5e-4, help='Threshold to determine if the generation is successful')
     parser.add_argument('--gpu', dest='gpu', action='store_true', help='Use gpu')
     parser.set_defaults(gpu=False)
@@ -153,7 +155,7 @@ def main():
             gpu=args.gpu,
             similarity_constraint=True,
             feasibility_constraint=True,
-            early_stop=True,
+            early_stop=args.early_stop,
             early_stop_th=args.sensitivity_per_weight_th,
             lr=1.0,
             n_iter=1000,
@@ -189,7 +191,7 @@ def main():
         success_rate = float(len(results_diff)) / float(n_total + 1e-8)
         print(f"Total {len(results_diff)+len(results_same)} sensitive samples generated. Success rate {success_rate}.")
         print(f"Sensitivity per weight, diff {np.mean(sensitivity_per_weight_diff) if len(sensitivity_per_weight_diff) > 0 else 0}, same {np.mean(sensitivity_per_weight_same)if len(sensitivity_per_weight_same) > 0 else 0}")
-        print(f"Number of activated neurons, diff {np.mean(activated_neurons_diff) if len(activated_neurons_diff) > 0 else 0}, same {np.mean(activated_neurons_same) if len(activated_neurons_same) > 0 else 0}")
+        print(f"Number of activated neurons, diff {np.mean(activated_neurons_diff) if len(activated_neurons_diff) > 0 else 0}, same {np.mean(activated_neurons_same) if len(activated_neurons_same) else 0}")
         print("#############")
 
 if __name__ == '__main__':
