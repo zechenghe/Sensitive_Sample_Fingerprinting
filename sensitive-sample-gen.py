@@ -188,8 +188,8 @@ def main():
         n_total = len(results_diff)+len(results_same)
         success_rate = float(len(results_diff)) / float(n_total + 1e-8)
         print(f"Total {len(results_diff)+len(results_same)} sensitive samples generated. Success rate {success_rate}.")
-        print(f"Sensitivity per weight, diff {np.mean(sensitivity_per_weight_diff)}, same {np.mean(sensitivity_per_weight_same)}")
-        print(f"Number of activated neurons, diff {np.mean(activated_neurons_diff)}, same {np.mean(activated_neurons_same)}")
+        print(f"Sensitivity per weight, diff {np.mean(sensitivity_per_weight_diff) if len(sensitivity_per_weight_diff) > 0 else 0}, same {np.mean(sensitivity_per_weight_same)if len(sensitivity_per_weight_same) > 0 else 0}")
+        print(f"Number of activated neurons, diff {np.mean(activated_neurons_diff) if len(activated_neurons_diff) > 0 else 0}, same {np.mean(activated_neurons_same) if len(activated_neurons_same) > 0 else 0}")
         print("#############")
 
 if __name__ == '__main__':
