@@ -34,8 +34,12 @@ def sensitive_sample_gen(
         softmax_out = F.softmax(logits, dim=-1)
         w = dict(model.named_parameters())['fc8.weight']
 
-        max_i = torch.argmax(softmax_out)
-        df_dw = torch.autograd.grad(softmax_out[max_i], w, create_graph=True)
+        #max_i = torch.argmax(softmax_out)
+        f = 0
+        for i in range(40):
+            f = f + tf.log(softmax_out[i] + 1e-8)
+
+        df_dw = torch.autograd.grad(f, w, create_graph=True)
         loss_sensitivity = -torch.mean(df_dw[0]**2)
 
         loss_TV = utils.TV(x)
