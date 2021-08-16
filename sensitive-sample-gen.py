@@ -78,12 +78,7 @@ def sensitive_sample_gen(
             x.data = torch.tensor(x_new)
 
         if i % 50 == 0 and model_trojaned is not None:
-            cur_diff = utils.pred_diff(
-                candidates=x,
-                model_clean=model,
-                model_trojaned=model_trojaned
-            )
-            print("Current diff", cur_diff)
+            print(f'Iter {i}: clean model predict, {torch.argmax(torch.squeeze(model(x)))}, trojaned model predict {torch.argmax(torch.squeeze(model_trojaned(x)))}')
 
     return x, sensitivity_per_weight
 
