@@ -17,7 +17,8 @@ def sensitive_sample_gen(
         similarity_constraint=True, similarity_mode='l2', eps=1.0,
         feasibility_constraint=True,
         n_iter=500, lr=1.0, gpu=False,
-        early_stop=False, early_stop_th=1.0
+        early_stop=False, early_stop_th=1.0,
+        model_trojaned=None   # model_trojaned for evalutaion only
     ):
 
     x.requires_grad = True
@@ -43,7 +44,7 @@ def sensitive_sample_gen(
         loss_sensitivity = -torch.mean(df_dw[0]**2)
 
         loss_TV = utils.TV(x)
-        loss = loss_sensitivity + 1e-8 * loss_TV
+        loss = loss_sensitivity #+ 1e-8 * loss_TV
         #max_i = torch.argmax(softmax_out)
         #loss = 0
         #for topi in torch.topk(softmax_out, 1)[1]:
@@ -76,6 +77,13 @@ def sensitive_sample_gen(
         else:
             x.data = torch.tensor(x_new)
 
+        if i % 50 == 0 and model_trojaned is not None:
+            utils.pred_diff(
+                candidates=x,
+                model_clean=model,
+                model_trojaned=model_trojaned
+            )
+
     return x, sensitivity_per_weight
 
 
@@ -89,6 +97,7 @@ def main():
     parser.add_argument('--label_file', type = str, default = 'data/names.txt', help='Labels')
     parser.add_argument('--model_clean', type = str, default = 'model/VGG-face-clean.pt', help='Clean model')
     parser.add_argument('--model_trojaned', type = str, default = 'model/VGG-face-trojaned.pt', help='Trojaned model')
+    parser.add_argument('--lr', type=float, default = 1.0, help='learning rate')
     parser.add_argument('--early_stop', dest='early_stop', action='store_true', help='Early stop')
     parser.set_defaults(early_stop=False)
     parser.add_argument('--sensitivity_per_weight_th', type=float, default = 5e-4, help='Threshold to determine if the generation is successful')
@@ -157,10 +166,11 @@ def main():
             feasibility_constraint=True,
             early_stop=args.early_stop,
             early_stop_th=args.sensitivity_per_weight_th,
-            lr=1.0,
+            lr=args.lr,
             n_iter=1000,
             similarity_mode='l2',
             eps=10.0,
+            model_trojaned=model_trojaned,
         )
 
         logits_clean = model(x_ss)
