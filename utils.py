@@ -194,7 +194,7 @@ def snr(x_origin, x):
 
     MSE = np.mean((x_origin - x)**2)
     S = np.mean(x_origin**2)
-    SNR = 10*np.log10(S/MSE)
+    SNR = 10*np.log10(S/MSE + 1e-100)
 
     return SNR
 
