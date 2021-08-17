@@ -2,7 +2,7 @@
 
 This code demonstrates sensitive-sample fingerprinting in the following paper:
 
-Zecheng He, Tianwei Zhang, and Ruby Lee, "Sensitive-sample Fingerprinting of Deep Neural Networks", IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 2019
+Zecheng He, Tianwei Zhang, and Ruby Lee, "[Sensitive-sample Fingerprinting of Deep Neural Networks](https://openaccess.thecvf.com/content_CVPR_2019/html/He_Sensitive-Sample_Fingerprinting_of_Deep_Neural_Networks_CVPR_2019_paper.html)", IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 2019
 
 #### Download models and data
 
@@ -63,7 +63,7 @@ To skip sanity check, use `nosanity_check` option. Use `--gpu` to enable gpu (de
 Similarly, to skip sanity check, use `nosanity_check` option. Use `--gpu` to enable gpu (default).
 
 # Reference
-You are encouraged to cite the following papers.
+You are encouraged to cite the following paper.
 ```
 @inproceedings{he2019sensitive,
   title={Sensitive-sample fingerprinting of deep neural networks},
