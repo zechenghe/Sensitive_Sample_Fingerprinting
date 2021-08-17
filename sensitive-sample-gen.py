@@ -18,6 +18,7 @@ def sensitive_sample_gen(
         feasibility_constraint=True,
         n_iter=500, lr=1.0, gpu=False,
         early_stop=False, early_stop_th=1.0,
+        w_tv=0.0,
         model_trojaned=None   # model_trojaned for evalutaion only
     ):
 
@@ -44,16 +45,7 @@ def sensitive_sample_gen(
         loss_sensitivity = -torch.mean(df_dw[0]**2)
 
         loss_TV = utils.TV(x)
-        loss = loss_sensitivity #+ 1e-8 * loss_TV
-        #max_i = torch.argmax(softmax_out)
-        #loss = 0
-        #for topi in torch.topk(softmax_out, 1)[1]:
-        #   loss -= torch.log(softmax_out[topi])
-
-        #df_dw = torch.autograd.grad(torch.log(softmax_out[topi]), w, create_graph=True)
-        #loss = torch.autograd.grad(loss, w, create_graph=True)[0]
-        #loss = - torch.mean(loss**2)
-        #loss = -torch.mean(df_dw[0]**2)
+        loss = loss_sensitivity + w_tv * loss_TV
 
         sensitivity_per_weight = -float(loss_sensitivity)
         x_TV = float(loss_TV)
@@ -94,6 +86,7 @@ def main():
     parser.add_argument('--model_clean', type = str, default = 'model/VGG-face-clean.pt', help='Clean model')
     parser.add_argument('--model_trojaned', type = str, default = 'model/VGG-face-trojaned.pt', help='Trojaned model')
     parser.add_argument('--lr', type=float, default = 1.0, help='learning rate')
+    parser.add_argument('--w_tv', type=float, default = 0.0, help='TV weight')
     parser.add_argument('--early_stop', dest='early_stop', action='store_true', help='Early stop')
     parser.set_defaults(early_stop=False)
     parser.add_argument('--sensitivity_per_weight_th', type=float, default = 5e-4, help='Threshold to determine if the generation is successful')
@@ -166,6 +159,7 @@ def main():
             n_iter=1000,
             similarity_mode='l2',
             eps=10.0,
+            w_tv=args.w_tv,
             model_trojaned=model_trojaned,
         )
 
@@ -190,7 +184,6 @@ def main():
 
             person_name = file_name[:re.search(r"\d", file_name).start()-1]
             utils.save_img(torch.squeeze(x_ss), dir=args.image_save_dir, fname=f"{person_name}_sensitive_sample")
-
 
         print("#############")
         n_total = len(results_diff)+len(results_same)

@@ -37,8 +37,8 @@ def manc(candidates, model, n_samples):
         activation_maps.append(activation)
 
     candidates_activation = torch.cat(activation_maps, axis=0)
-    print("candidates_activation.size()", candidates_activation.size())
-    print([torch.sum(candidates_activation[i]) for i in range(candidates_activation.size()[0])])
+    # print("candidates_activation.size()", candidates_activation.size())
+    # print([torch.sum(candidates_activation[i]) for i in range(candidates_activation.size()[0])])
 
     current_union_map = torch.zeros(size=candidates_activation[0].size(), dtype=torch.bool)
     if candidates_activation.is_cuda:
@@ -60,7 +60,7 @@ def manc(candidates, model, n_samples):
         print(f"Total activate {torch.sum(current_union_map)} neurons")
 
     res = candidates[np.array(list(selected))]
-    if len(res.size()) != len(candidates.size()):     # n_sample = 1, the batch dim is eliminated
+    if len(res.size()) != len(candidates.size()):     # if n_sample = 1, the batch dim is eliminated
         res = torch.unsqueeze(res, 0)
 
     return res
@@ -148,7 +148,7 @@ def main():
 
         diff = utils.pred_diff(candidates_selected, model, model_trojaned, verbose=False)
         res.append(1 if diff > 0 else 0)
-        print(f"MANC {diff} candidates cause different outputs. Total {np.mean(res)} succeeds.")
+        print(f"MANC trials {trial}, {diff} candidates result in different outputs. Total {np.mean(res)} succeeds.")
 
 if __name__ == '__main__':
     main()
