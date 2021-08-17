@@ -53,7 +53,7 @@ def manc(candidates, model, n_samples):
         remaining.remove(current_selected_idx)
         current_union_map = current_union_map | candidates_activation[current_selected_idx]
 
-        print(f"Total activate {torch.sum(current_union_map)} neurons")
+    print(f"Total activate {torch.sum(current_union_map)} neurons")
 
     res = candidates[np.array(list(selected))]
     if len(res.size()) != len(candidates.size()):     # if n_sample = 1, the batch dim is eliminated
