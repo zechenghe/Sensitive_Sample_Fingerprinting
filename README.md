@@ -52,7 +52,7 @@ Glob, Pathlib
 
     python3 sensitive-sample-gen.py --input_dir_clean data/VGGFace-Clean --lr 1e-2 --gpu
 
-To skip sanity check, use `nosanity_check` option. Use `--gpu` to enable gpu (default).
+To skip sanity check, use `nosanity_check` option. Use `--gpu` to enable gpu (default). Generating around 100 samples should be enough for MANC selection.
 
 #### Maximum Active Neuron Cover (MANC) sample selection
 
