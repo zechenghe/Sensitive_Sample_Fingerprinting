@@ -4,7 +4,7 @@ This code demonstrates sensitive-sample fingerprinting in the following paper:
 
 Zecheng He, Tianwei Zhang, and Ruby Lee, "[Sensitive-sample Fingerprinting of Deep Neural Networks](https://openaccess.thecvf.com/content_CVPR_2019/html/He_Sensitive-Sample_Fingerprinting_of_Deep_Neural_Networks_CVPR_2019_paper.html)", IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 2019
 
-#### Download models and data
+### Download models and data
 
 This demo generates sensitive samples to detect integrity breaches, e.g., neural network trojans, in a deep neural network. Download models and data using [this link](https://drive.google.com/drive/folders/1awN7O8WC9Pi-f6YQNkzNND3Yh7J22B7B?usp=sharing). The clean and trojaned models (face recognition in Caffe) are obtained from https://github.com/PurduePAML/TrojanNN. The models are transformed from Caffe to Pytorch using [caffemodel2pytorch](https://github.com/vadimkantorov/caffemodel2pytorch).
 
@@ -26,7 +26,7 @@ Put `VGG-face-clean.pt` and `VGG-face-traojaned.pt` from the [above link](https:
 Put `names.txt`, `VGGFace-Clean/` and `VGGFace-Trojaned/` from the [above link](https://drive.google.com/drive/folders/1awN7O8WC9Pi-f6YQNkzNND3Yh7J22B7B?usp=sharing) under `data/`
 
 
-#### Dependencies
+### Dependencies
 
 This Pytorch implementaion is based on the following configuration.
 
@@ -45,7 +45,7 @@ Matplotlib 3.3.2 (for saving images)
 Glob, Pathlib
 
 
-#### Generate sensitive samples
+### Generate sensitive samples
 
 `sensitive-sample-gen.py` is used to generate sensitive samples. The generated sensitive samples are saved in `generated/`.
 
@@ -53,7 +53,7 @@ Glob, Pathlib
 
 To skip sanity check, use `nosanity_check` option. Use `--gpu` to enable gpu (default). Generating around 100 samples should be enough for MANC selection.
 
-#### Maximum Active Neuron Cover (MANC) sample selection
+### Maximum Active Neuron Cover (MANC) sample selection
 
 `manc.py` performs Maximum Active Neuron Cover (MANC) sample selection. Assume the candidate sensitive samples have been generated in `generated/` folder. This will select a small subset of `n_samples` sensitive samples from a large bag of samples.
 
@@ -61,7 +61,7 @@ To skip sanity check, use `nosanity_check` option. Use `--gpu` to enable gpu (de
 
 Similarly, to skip sanity check, use `nosanity_check` option. Use `--gpu` to enable gpu (default).
 
-# Reference
+### Reference
 You are encouraged to cite the following paper.
 ```
 @inproceedings{he2019sensitive,
