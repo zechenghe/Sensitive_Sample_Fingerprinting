@@ -9,6 +9,8 @@ Zecheng He, Tianwei Zhang, and Ruby Lee, "[Sensitive-sample Fingerprinting of De
 This demo generates sensitive samples to detect integrity breaches, e.g., neural network trojans, in a deep neural network. Download models and data using [this link](https://drive.google.com/drive/folders/1awN7O8WC9Pi-f6YQNkzNND3Yh7J22B7B?usp=sharing). The clean and trojaned models (face recognition in Caffe) are obtained from https://github.com/PurduePAML/TrojanNN. The models are transformed from Caffe to Pytorch using [caffemodel2pytorch](https://github.com/vadimkantorov/caffemodel2pytorch).
 
     git clone git@github.com:zechenghe/Sensitive_Sample_Fingerprinting.git
+    cd Sensitive_Sample_Fingerprinting/
+    
 ##### Models
 
 
@@ -50,7 +52,6 @@ Glob, Pathlib
 `sensitive-sample-gen.py` is used to generate sensitive samples. The generated sensitive samples are saved in `generated/`.
 
     python3 sensitive-sample-gen.py --input_dir_clean data/VGGFace-Clean --lr 1e-2 --gpu
-    cd Sensitive_Sample_Fingerprinting/
 
 To skip sanity check, use `nosanity_check` option. Use `--gpu` to enable gpu (default). Generating around 100 samples should be enough for MANC selection.
 
