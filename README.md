@@ -50,6 +50,7 @@ Glob, Pathlib
 `sensitive-sample-gen.py` is used to generate sensitive samples. The generated sensitive samples are saved in `generated/`.
 
     python3 sensitive-sample-gen.py --input_dir_clean data/VGGFace-Clean --lr 1e-2 --gpu
+    cd Sensitive_Sample_Fingerprinting/
 
 To skip sanity check, use `nosanity_check` option. Use `--gpu` to enable gpu (default). Generating around 100 samples should be enough for MANC selection.
 
