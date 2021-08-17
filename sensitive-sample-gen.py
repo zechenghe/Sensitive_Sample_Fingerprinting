@@ -36,7 +36,9 @@ def sensitive_sample_gen(
         softmax_out = F.softmax(logits, dim=-1)
         w = dict(model.named_parameters())['fc8.weight']
 
-        #max_i = torch.argmax(softmax_out)
+        # max_i = torch.argmax(softmax_out)
+        # Ideally we can sum over all output dimensions -- but that is computational costly.
+        # In practice, we observe that summing over a subset of output dimensions is enough
         f = 0
         for sindex in range(40):
             f = f + torch.log(softmax_out[sindex] + 1e-8)
@@ -49,7 +51,11 @@ def sensitive_sample_gen(
 
         sensitivity_per_weight = -float(loss_sensitivity)
         x_TV = float(loss_TV)
-        print(f"Iter {i}, Sensitivity per weight {sensitivity_per_weight}, TV loss {loss_TV}")
+        if w_tv != 0.0:
+            print(f"Iter {i}, Sensitivity per weight {sensitivity_per_weight}, TV loss {loss_TV}")
+        else:
+            print(f"Iter {i}, Sensitivity per weight {sensitivity_per_weight}")
+
 
         if early_stop and sensitivity_per_weight > early_stop_th:
             return x, sensitivity_per_weight
@@ -59,7 +65,7 @@ def sensitive_sample_gen(
 
         x_new = x.detach().cpu().numpy()
         if similarity_constraint:
-            x_new = utils.similarity_projection(x_origin, x_new, eps) #mode=similarity_mode)
+            x_new = utils.similarity_projection(x_origin, x_new, eps)
 
         if feasibility_constraint:
             x_new = utils.feasibility_projection(x_new)
